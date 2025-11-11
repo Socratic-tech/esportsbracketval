@@ -361,7 +361,8 @@
         <h1>Scholastic Rocket League – Round Robin + Finals</h1>
         <div class="subheading">
           Enter series scores for each group match (e.g., 3–1 in a BO5).
-          Standings update automatically. Top two teams advance to the Grand Final.
+          Standings update automatically. Grand Final teams will only appear once
+          all group matches have valid scores.
         </div>
       </div>
       <div>
@@ -411,7 +412,7 @@
           <tbody id="standings-body"></tbody>
         </table>
         <div class="note">
-          Top two teams (highlighted) advance to the Grand Final below.
+          Top two teams (highlighted) advance to the Grand Final once all group matches are complete.
           Tiebreakers: match wins → game differential → games scored.
         </div>
       </div>
@@ -428,7 +429,9 @@
         <div class="finals-card">
           <div class="finals-header">
             <span>Grand Final</span>
-            <span style="font-size:0.7rem; color:var(--muted);">Set champion after group stage is complete</span>
+            <span style="font-size:0.7rem; color:var(--muted);">
+              Finals pairing appears after all group matches are played
+            </span>
           </div>
           <div class="finals-team-row">
             <div class="finals-team-label">
@@ -457,7 +460,7 @@
             />
           </div>
           <div class="match-footer" id="finals-status">
-            Enter final series score (e.g., 3–1) and press “Set Champion”.
+            Enter all group scores first. When the group stage is complete, the top 2 will appear here.
           </div>
           <div style="margin-top:8px; display:flex; justify-content:flex-end;">
             <button class="btn" onclick="setChampion()">
@@ -556,6 +559,29 @@
       });
     }
 
+    function allGroupMatchesComplete() {
+      // Every match must have two scores and they must not be equal
+      for (const m of groupMatches) {
+        const s1Input = document.querySelector(
+          `.score-input[data-match-id="${m.id}"][data-slot="team1"]`
+        );
+        const s2Input = document.querySelector(
+          `.score-input[data-match-id="${m.id}"][data-slot="team2"]`
+        );
+
+        const s1 = parseInt(s1Input.value, 10);
+        const s2 = parseInt(s2Input.value, 10);
+
+        if (Number.isNaN(s1) || Number.isNaN(s2)) {
+          return false;
+        }
+        if (s1 === s2) {
+          return false; // no ties allowed
+        }
+      }
+      return true;
+    }
+
     function recomputeStandings() {
       // Initialize stats
       const stats = {};
@@ -620,17 +646,20 @@
         return a.name.localeCompare(b.name); // alpha
       });
 
-      renderStandings(standings);
-      updateFinalsTeams(standings);
+      const complete = allGroupMatchesComplete();
+
+      renderStandings(standings, complete);
+      updateFinalsTeams(standings, complete);
     }
 
-    function renderStandings(standings) {
+    function renderStandings(standings, complete) {
       const tbody = document.getElementById("standings-body");
       tbody.innerHTML = "";
 
       standings.forEach((row, index) => {
         const tr = document.createElement("tr");
-        if (index < 2) tr.classList.add("top-seed");
+        // Only highlight top 2 when group stage is complete
+        if (complete && index < 2) tr.classList.add("top-seed");
 
         const gd = row.gf - row.ga;
         let gdClass = "";
@@ -650,26 +679,32 @@
       });
     }
 
-    function updateFinalsTeams(standings) {
+    function updateFinalsTeams(standings, complete) {
       const t1Span = document.getElementById("finals-team1-name");
       const t2Span = document.getElementById("finals-team2-name");
+      const finalsStatus = document.getElementById("finals-status");
 
-      if (!standings || standings.length < 2) {
+      if (!complete || !standings || standings.length < 2) {
+        // Hide actual teams until group stage is fully complete
         t1Span.textContent = "Top Seed";
         t2Span.textContent = "Second Seed";
+        delete t1Span.dataset.teamId;
+        delete t2Span.dataset.teamId;
+
+        finalsStatus.textContent =
+          "Enter all group scores. Once every match has a winner, the top 2 teams will appear here.";
         return;
       }
 
+      // Group stage complete: show finals teams
       t1Span.textContent = standings[0].name;
       t2Span.textContent = standings[1].name;
 
-      // Store references for champion calculation
       t1Span.dataset.teamId = standings[0].teamId;
       t2Span.dataset.teamId = standings[1].teamId;
 
-      const finalsStatus = document.getElementById("finals-status");
       finalsStatus.textContent =
-        "Grand Final pairing is based on current standings. Update scores above as matches finish.";
+        "Grand Final pairing is locked. Enter the series score and click “Set Champion”.";
     }
 
     function setChampion() {
@@ -678,8 +713,13 @@
       const id1 = t1Span.dataset.teamId;
       const id2 = t2Span.dataset.teamId;
 
+      if (!allGroupMatchesComplete()) {
+        alert("You must complete all group stage matches before setting a champion.");
+        return;
+      }
+
       if (!id1 || !id2) {
-        alert("You need at least two teams in the standings before setting a champion.");
+        alert("Grand Final teams are not set yet. Check that all group matches have valid scores.");
         return;
       }
 
@@ -749,7 +789,7 @@
       delete document.getElementById("finals-team2-name").dataset.teamId;
 
       document.getElementById("finals-status").textContent =
-        "Enter group stage scores to generate standings and Grand Final pairing.";
+        "Enter all group scores first. When the group stage is complete, the top 2 will appear here.";
 
       champion = null;
       renderChampion();
