@@ -506,10 +506,13 @@
         const card = document.createElement("div");
         card.className = "match-card";
         card.innerHTML = `
-          <div class="match-header">
-            <span>Match ${index + 1}</span>
-            <span>${t1.name} vs ${t2.name}</span>
-          </div>
+        <div class="match-header" style="flex-direction:column; align-items:flex-start;">
+        <span>Match ${index + 1}</span>
+        <span style="font-size:0.8rem; color:var(--text); margin-top:2px;">
+        ${t1.name} vs ${t2.name}
+      </span>
+    </div>
+
           <div class="team-row">
             <span>${t1.name}</span>
             <span style="text-align:right;">${t2.name}</span>
