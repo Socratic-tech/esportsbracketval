@@ -20,17 +20,60 @@
 
     * { box-sizing: border-box; }
 
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% center;
+      }
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), 0 0 40px rgba(56, 189, 248, 0.1);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(56, 189, 248, 0.5), 0 0 60px rgba(56, 189, 248, 0.2);
+      }
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+      background: #020617;
+      background-image: 
+        radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 90%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0f1e 0%, #020617 100%);
       color: var(--text);
       padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      animation: fadeIn 0.6s ease-out;
     }
 
     h1 {
@@ -39,23 +82,44 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: #f9fafb;
+      text-shadow: 0 2px 20px rgba(56, 189, 248, 0.4);
+      background: linear-gradient(135deg, #f9fafb 0%, #bae6fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .subheading {
       font-size: 0.9rem;
       color: var(--muted);
       max-width: 900px;
+      line-height: 1.5;
     }
 
     .shell {
-      background: radial-gradient(circle at top, #020617 0, #020617 100%);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%);
       border-radius: 24px;
       padding: 18px 20px;
-      border: 1px solid rgba(148, 163, 184, 0.16);
-      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
       display: flex;
       flex-direction: column;
       gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shell::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.8), transparent);
+      animation: shimmer 3s infinite;
     }
 
     .toolbar {
@@ -76,13 +140,21 @@
 
     .tag {
       border-radius: 999px;
-      padding: 4px 10px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: radial-gradient(circle at top, rgba(148, 163, 184, 0.08), transparent);
+      padding: 6px 12px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(15, 23, 42, 0.8));
       color: var(--muted);
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .tag:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 0 6px 16px rgba(56, 189, 248, 0.2);
     }
 
     .tag strong {
@@ -101,8 +173,8 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
-      box-shadow: 0 0 0 rgba(56, 189, 248, 0);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       text-decoration: none;
     }
 
@@ -139,21 +211,44 @@
     .panel {
       flex: 1 1 320px;
       min-width: 320px;
-      background: radial-gradient(circle at top left, var(--accent-soft), rgba(15, 23, 42, 0.94));
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(2, 6, 23, 0.9) 100%);
       border-radius: var(--radius-lg);
-      border: 1px solid rgba(37, 99, 235, 0.5);
-      padding: 14px 12px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 16px 14px;
       position: relative;
       overflow: hidden;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(56, 189, 248, 0.1);
+      transition: all 0.3s ease;
     }
 
     .panel::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at top, rgba(59, 130, 246, 0.14), transparent 60%);
-      opacity: 0.4;
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 60%);
+      opacity: 0.5;
       pointer-events: none;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .panel:hover {
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(56, 189, 248, 0.1),
+        inset 0 1px 0 rgba(56, 189, 248, 0.15);
     }
 
     .panel-header {
@@ -161,7 +256,8 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      z-index: 1;
     }
 
     .panel-title {
@@ -169,24 +265,46 @@
       text-transform: uppercase;
       letter-spacing: 0.18em;
       color: #bae6fd;
+      text-shadow: 0 2px 10px rgba(56, 189, 248, 0.5);
+      font-weight: 600;
     }
 
     .panel-sub {
       font-size: 0.75rem;
       color: var(--muted);
+      line-height: 1.4;
+      margin-top: 4px;
     }
 
     .match-card {
       position: relative;
       z-index: 1;
-      background: rgba(15, 23, 42, 0.92);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
       border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.38);
-      padding: 8px 8px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 10px 10px 12px;
       margin-bottom: 10px;
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.7);
+      box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(148, 163, 184, 0.1);
       font-size: 0.8rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      animation: fadeIn 0.5s ease-out backwards;
     }
+
+    .match-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(56, 189, 248, 0.15),
+        inset 0 1px 0 rgba(148, 163, 184, 0.15);
+    }
+
+    .match-card:nth-child(2) { animation-delay: 0.1s; }
+    .match-card:nth-child(3) { animation-delay: 0.2s; }
+    .match-card:nth-child(4) { animation-delay: 0.3s; }
 
     .match-header {
       display: flex;
@@ -197,6 +315,7 @@
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 6px;
+      font-weight: 600;
     }
 
     .match-header span:nth-child(2) {
@@ -205,6 +324,7 @@
       margin-top: 2px;
       letter-spacing: normal;
       text-transform: none;
+      font-weight: 500;
     }
 
     .team-row {
@@ -213,6 +333,13 @@
       font-size: 0.75rem;
       color: var(--muted);
       margin-bottom: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .team-row:hover {
+      background: rgba(56, 189, 248, 0.05);
+      border-radius: 6px;
+      padding: 2px 4px;
     }
 
     .team-row span {
@@ -220,6 +347,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: 500;
     }
 
     .game-row {
@@ -233,19 +361,22 @@
     .game-label {
       font-size: 0.72rem;
       color: var(--muted);
+      font-weight: 600;
     }
 
     .score-input {
       width: 52px;
       border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.6);
       padding: 4px 6px;
-      background: rgba(15, 23, 42, 0.9);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.9));
       color: var(--text);
       font-size: 0.75rem;
       text-align: center;
       outline: none;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      font-weight: 600;
     }
 
     .score-input::placeholder {
@@ -261,6 +392,11 @@
       margin-top: 6px;
       font-size: 0.74rem;
       color: var(--muted);
+      line-height: 1.4;
+      padding: 6px 8px;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+      border-left: 2px solid rgba(56, 189, 248, 0.3);
     }
 
     .standings-table {
@@ -273,7 +409,7 @@
 
     .standings-table th,
     .standings-table td {
-      padding: 5px 6px;
+      padding: 6px 8px;
       text-align: center;
     }
 
@@ -283,10 +419,16 @@
       letter-spacing: 0.12em;
       color: var(--muted);
       border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+      font-weight: 600;
     }
 
     .standings-table tbody tr {
       border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+      transition: all 0.2s ease;
+    }
+
+    .standings-table tbody tr:hover {
+      background: rgba(56, 189, 248, 0.05);
     }
 
     .standings-team {
@@ -308,12 +450,25 @@
     .finals-card {
       position: relative;
       z-index: 1;
-      background: rgba(15, 23, 42, 0.92);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
       border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.38);
+      border: 1px solid rgba(148, 163, 184, 0.4);
       padding: 10px 10px 11px;
       font-size: 0.8rem;
-      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.75);
+      box-shadow: 
+        0 12px 28px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(148, 163, 184, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .finals-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(56, 189, 248, 0.15),
+        inset 0 1px 0 rgba(148, 163, 184, 0.15);
     }
 
     .finals-header {
@@ -325,6 +480,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-weight: 600;
     }
 
     .finals-team-names {
@@ -333,6 +489,13 @@
       font-size: 0.75rem;
       color: var(--muted);
       margin-bottom: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .finals-team-names:hover {
+      background: rgba(56, 189, 248, 0.05);
+      border-radius: 6px;
+      padding: 2px 4px;
     }
 
     .finals-team-names span {
@@ -340,6 +503,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: 500;
     }
 
     .finals-game-row {
@@ -352,38 +516,229 @@
 
     .champion-banner {
       margin-top: 10px;
-      padding: 10px 12px;
+      padding: 14px 16px;
       border-radius: 14px;
-      background: radial-gradient(circle at left, rgba(34, 197, 94, 0.24), rgba(15, 23, 42, 0.96));
-      border: 1px solid rgba(34, 197, 94, 0.6);
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border: 2px solid rgba(34, 197, 94, 0.6);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
       font-size: 0.85rem;
+      box-shadow: 
+        0 10px 30px rgba(34, 197, 94, 0.2),
+        inset 0 1px 0 rgba(34, 197, 94, 0.3);
+      transition: all 0.3s ease;
+      animation: fadeIn 0.6s ease-out, glow 3s ease-in-out infinite;
+    }
+
+    .champion-banner:hover {
+      transform: scale(1.02);
+      box-shadow: 
+        0 15px 40px rgba(34, 197, 94, 0.3),
+        inset 0 1px 0 rgba(34, 197, 94, 0.4);
     }
 
     .champion-title {
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       font-size: 0.75rem;
       color: #bbf7d0;
+      text-shadow: 0 2px 10px rgba(34, 197, 94, 0.5);
     }
 
-    .champion-name { font-size: 0.9rem; }
-    .champion-sub { font-size: 0.75rem; color: #a7f3d0; }
+    .champion-name { 
+      font-size: 0.95rem; 
+      font-weight: 600;
+      color: #f0fdf4;
+    }
+    
+    .champion-sub { 
+      font-size: 0.75rem; 
+      color: #a7f3d0; 
+      line-height: 1.4;
+    }
 
     .note {
-      margin-top: 4px;
+      margin-top: 6px;
       font-size: 0.72rem;
       color: #93c5fd;
+      line-height: 1.4;
+      padding: 6px 8px;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+      border-left: 2px solid rgba(56, 189, 248, 0.3);
     }
 
     @media (max-width: 720px) {
       body { padding: 16px; }
       h1 { font-size: 1.3rem; }
       .shell { padding: 14px 14px; }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    @keyframes blowUp {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .match-card-enlarged,
+    .finals-card-enlarged {
+      position: relative;
+      z-index: 1001;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(2, 6, 23, 1) 100%);
+      border-radius: 20px;
+      border: 2px solid rgba(56, 189, 248, 0.6);
+      padding: 32px;
+      max-width: 700px;
+      width: 100%;
+      font-size: 1rem;
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.8),
+        0 0 80px rgba(56, 189, 248, 0.3),
+        inset 0 2px 0 rgba(56, 189, 248, 0.2);
+      animation: blowUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .match-card-enlarged::before,
+    .finals-card-enlarged::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.15), transparent 70%);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+
+    .match-card-enlarged .match-header {
+      margin-bottom: 20px;
+    }
+
+    .match-card-enlarged .match-header span:first-child {
+      font-size: 0.9rem;
+      color: #bae6fd;
+    }
+
+    .match-card-enlarged .match-header span:nth-child(2) {
+      font-size: 1.3rem;
+      color: #f9fafb;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .match-card-enlarged .team-row,
+    .finals-card-enlarged .finals-team-names {
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      font-size: 1rem;
+    }
+
+    .match-card-enlarged .game-row,
+    .finals-card-enlarged .finals-game-row {
+      gap: 10px;
+      margin: 10px 0;
+      padding: 8px;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 10px;
+    }
+
+    .match-card-enlarged .game-label,
+    .finals-card-enlarged .game-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .match-card-enlarged .score-input,
+    .finals-card-enlarged .score-input {
+      width: 70px;
+      padding: 10px 12px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .match-card-enlarged .match-footer {
+      font-size: 0.85rem;
+      margin-top: 16px;
+      padding: 10px 12px;
+    }
+
+    .finals-card-enlarged .finals-header {
+      margin-bottom: 16px;
+    }
+
+    .finals-card-enlarged .finals-header span:first-child {
+      font-size: 0.9rem;
+      color: #bae6fd;
+    }
+
+    .finals-card-enlarged .finals-header span:last-child {
+      font-size: 0.8rem;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #fecaca;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
+      transition: all 0.2s ease;
+      z-index: 1002;
+    }
+
+    .close-modal:hover {
+      background: rgba(239, 68, 68, 0.4);
+      border-color: rgba(239, 68, 68, 0.8);
+      transform: rotate(90deg);
+    }
+
+    .modal-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      opacity: 0.7;
     }
   </style>
 </head>
@@ -459,7 +814,7 @@
           </div>
         </div>
 
-        <div class="finals-card">
+        <div class="finals-card" id="finals-card">
           <div class="finals-header">
             <span>Grand Final</span>
             <span style="font-size:0.7rem; color:var(--muted);">
@@ -485,6 +840,13 @@
         <div id="champion-display" style="margin-top:10px;"></div>
       </div>
     </div>
+  </div>
+
+  <!-- Modal Overlay for Enlarged Cards -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="close-modal" id="close-modal">×</div>
+    <div id="modal-content"></div>
+    <div class="modal-hint">Click outside or press ESC to close</div>
   </div>
 
   <script>
@@ -527,6 +889,7 @@
 
         const card = document.createElement("div");
         card.className = "match-card";
+        card.dataset.matchId = m.id;
         card.innerHTML = `
           <div class="match-header">
             <span>Match ${index + 1}</span>
@@ -915,12 +1278,124 @@
       setInterval(fetchFromServer, 10000);
     }
 
+    // ======== MODAL FUNCTIONALITY ====================================
+    function initModalHandlers() {
+      const modal = document.getElementById('modal-overlay');
+      const closeBtn = document.getElementById('close-modal');
+      const modalContent = document.getElementById('modal-content');
+
+      // Close modal on close button
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeModal();
+      });
+
+      // Close modal on overlay click (but not on card click)
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Close modal on ESC key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          closeModal();
+        }
+      });
+
+      // Add click handlers to match cards (but not input elements)
+      function attachCardClickHandlers() {
+        const matchCards = document.querySelectorAll('.match-card');
+        matchCards.forEach(card => {
+          card.addEventListener('click', function(e) {
+            // Don't open modal if clicking on input
+            if (e.target.classList.contains('score-input')) return;
+            const matchId = this.dataset.matchId;
+            openModalWithGroupMatch(matchId);
+          });
+        });
+
+        // Finals card click handler
+        const finalsCard = document.getElementById('finals-card');
+        if (finalsCard) {
+          finalsCard.addEventListener('click', function(e) {
+            // Don't open modal if clicking on input
+            if (e.target.classList.contains('score-input')) return;
+            openModalWithFinalsCard();
+          });
+        }
+      }
+
+      // Initial attachment
+      attachCardClickHandlers();
+
+      // Reattach after updates (since cards might be recreated)
+      const originalBuildGroupMatches = window.buildGroupMatches;
+      window.buildGroupMatches = function() {
+        originalBuildGroupMatches();
+        attachCardClickHandlers();
+      };
+    }
+
+    function openModalWithGroupMatch(matchId) {
+      const modal = document.getElementById('modal-overlay');
+      const modalContent = document.getElementById('modal-content');
+      
+      const match = groupMatches.find(m => m.id === matchId);
+      if (!match) return;
+
+      const t1 = getTeamById(match.t1);
+      const t2 = getTeamById(match.t2);
+      const matchIndex = groupMatches.indexOf(match) + 1;
+
+      // Get current card content
+      const card = document.querySelector(`.match-card[data-match-id="${matchId}"]`);
+      if (!card) return;
+
+      const cardClone = card.cloneNode(true);
+      cardClone.className = 'match-card-enlarged';
+      cardClone.removeAttribute('data-match-id');
+
+      modalContent.innerHTML = '';
+      modalContent.appendChild(cardClone);
+
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openModalWithFinalsCard() {
+      const modal = document.getElementById('modal-overlay');
+      const modalContent = document.getElementById('modal-content');
+      
+      const finalsCard = document.getElementById('finals-card');
+      if (!finalsCard) return;
+
+      const cardClone = finalsCard.cloneNode(true);
+      cardClone.className = 'finals-card-enlarged';
+      cardClone.removeAttribute('id');
+
+      modalContent.innerHTML = '';
+      modalContent.appendChild(cardClone);
+
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal-overlay');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    // ================================================================
+
     // --- Init ---------------------------------------------------------------
     buildGroupMatches();
     buildFinalsGames();
     recomputeStandings();
     renderChampion();
     startLiveUpdates();
+    initModalHandlers();
   </script>
 </body>
 </html>
