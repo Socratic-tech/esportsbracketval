@@ -420,16 +420,16 @@
 
     // Match metadata (default labels if backend doesn't provide any)
     const matchDefinitions = {
-      M1: { id: 'M1', label: 'Upper Round 1 (2 vs 3)' },
-      M2: { id: 'M2', label: 'Upper Round 1 (4 vs 5)' },
-      M3: { id: 'M3', label: 'Upper Semifinal (1 vs winner of M2)' },
-      M4: { id: 'M4', label: 'Upper Final' },
-      M5: { id: 'M5', label: 'Lower Round 1' },
-      M6: { id: 'M6', label: 'Lower Semifinal' },
-      M7: { id: 'M7', label: 'Lower Final' },
-      M8: { id: 'M8', label: 'Grand Final (First Series)' },
-      M9: { id: 'M9', label: 'Grand Final Reset (if needed)' }
-    };
+  M1: { id: 'M1', label: 'Upper Round 1 (3 Buchanan vs 6 Michigan Lutheran)' },
+  M2: { id: 'M2', label: 'Upper Round 1 (4 Watervliet vs 5 Marcellus)' },
+  M3: { id: 'M3', label: 'Upper Semifinal (1 St. Joseph vs winner of M2)' },
+  M4: { id: 'M4', label: 'Upper Semifinal (2 West Ottawa vs winner of M1)' },
+  M5: { id: 'M5', label: 'Lower Round 1' },
+  M6: { id: 'M6', label: 'Lower Semifinal' },
+  M7: { id: 'M7', label: 'Lower Final' },
+  M8: { id: 'M8', label: 'Grand Final (First Series)' },
+  M9: { id: 'M9', label: 'Grand Final Reset (if needed)' }
+};
 
     function createEmptyMatchCard(id) {
       const def = matchDefinitions[id];
