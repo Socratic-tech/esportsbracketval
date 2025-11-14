@@ -391,9 +391,8 @@
   <div class="shell">
     <div class="toolbar">
       <div>
-        <h1>Scholastic Rocket League – Round Robin + BO5 Finals</h1>
+        <h1>Scholastic Rocket League – Round Robin BO3 + BO5 Finals</h1>
         <div class="subheading">
-          This bracket is read-only and updates live from the tournament control panel.
           Group stage: BO3. Grand Final: BO5 (first to 3). Standings update automatically.
         </div>
       </div>
@@ -596,46 +595,56 @@
     }
 
     function computeSeriesOutcome(match) {
-      let gamesWon1 = 0;
-      let gamesWon2 = 0;
+  let gamesWon1 = 0;
+  let gamesWon2 = 0;
+  let gamesPlayed = 0;
 
-      for (let g = 1; g <= 3; g++) {
-        const s1Input = document.querySelector(
-          `.score-input[data-match-id="${match.id}"][data-game="${g}"][data-team="1"]`
-        );
-        const s2Input = document.querySelector(
-          `.score-input[data-match-id="${match.id}"][data-game="${g}"][data-team="2"]`
-        );
+  for (let g = 1; g <= 3; g++) {
+    const s1Input = document.querySelector(
+      `.score-input[data-match-id="${match.id}"][data-game="${g}"][data-team="1"]`
+    );
+    const s2Input = document.querySelector(
+      `.score-input[data-match-id="${match.id}"][data-game="${g}"][data-team="2"]`
+    );
 
-        if (!s1Input || !s2Input) continue;
+    if (!s1Input || !s2Input) continue;
 
-        const s1 = parseInt(s1Input.value, 10);
-        const s2 = parseInt(s2Input.value, 10);
+    const s1 = parseInt(s1Input.value, 10);
+    const s2 = parseInt(s2Input.value, 10);
 
-        if (Number.isNaN(s1) || Number.isNaN(s2)) continue;
-        if (s1 === s2) continue;
+    if (Number.isNaN(s1) || Number.isNaN(s2)) continue; // no valid game
+    if (s1 === s2) continue; // ignore ties
 
-        if (s1 > s2) gamesWon1++;
-        else gamesWon2++;
-      }
+    gamesPlayed++;
 
-      const neededWins = 2;
-      const complete =
-        (gamesWon1 >= neededWins || gamesWon2 >= neededWins) &&
-        gamesWon1 !== gamesWon2;
+    if (s1 > s2) gamesWon1++;
+    else gamesWon2++;
+  }
 
-      let winner = null;
-      if (complete) {
-        winner = gamesWon1 > gamesWon2 ? match.t1 : match.t2;
-      }
+  // No games? Series not started.
+  if (gamesPlayed === 0) {
+    return { complete: false, winner: null, games1: 0, games2: 0 };
+  }
 
-      return {
-        complete,
-        winner,
-        games1: gamesWon1,
-        games2: gamesWon2
-      };
-    }
+  // If one team has more game wins, series has a winner.
+  if (gamesWon1 !== gamesWon2) {
+    const winner = gamesWon1 > gamesWon2 ? match.t1 : match.t2;
+    return {
+      complete: true,
+      winner,
+      games1: gamesWon1,
+      games2: gamesWon2
+    };
+  }
+
+  // Same number of game wins (e.g., 1–1 with G3 unplayed) → not decided yet.
+  return {
+    complete: false,
+    winner: null,
+    games1: gamesWon1,
+    games2: gamesWon2
+  };
+}
 
     function allGroupMatchesComplete() {
       for (const m of groupMatches) {
