@@ -634,7 +634,7 @@
       <div>
         <h1>Scholastic Valorant – Double Elimination Bracket</h1>
         <div class="subheading">
-          Live-view bracket for a six-team Valorant double-elimination event.
+          Live-view bracket for a six-team Valorant double-elimination event (11 total matches).
           Scores and match labels are driven by the admin control panel and update automatically.
         </div>
       </div>
@@ -670,25 +670,26 @@
             <div id="match-M2" class="match-card"></div>
           </div>
 
-          <!-- Column 2: Upper Semi & Upper Final -->
+          <!-- Column 2: Upper Semifinals & Final -->
           <div>
-            <div class="column-label">Upper Path</div>
+            <div class="column-label">Upper Bracket</div>
             <div id="match-M3" class="match-card"></div>
             <div id="match-M4" class="match-card"></div>
+            <div id="match-M5" class="match-card"></div>
           </div>
 
           <!-- Column 3: Lower Bracket -->
           <div>
             <div class="column-label">Lower Bracket</div>
-            <div id="match-M5" class="match-card"></div>
             <div id="match-M6" class="match-card"></div>
             <div id="match-M7" class="match-card"></div>
+            <div id="match-M8" class="match-card"></div>
+            <div id="match-M9" class="match-card"></div>
           </div>
         </div>
 
         <div class="note">
-          Bracket flow (who advances where) is set in the admin control panel. This public page simply reflects the
-          names and series scores applied there.
+          Bracket flow: Upper R1 (M1, M2) → Upper Semis (M3, M4) → Upper Final (M5). Lower bracket: M6 → M7 → M8 → M9 (Lower Final). Grand Finals: M10, M11 (if reset needed).
         </div>
       </div>
 
@@ -706,15 +707,15 @@
         <div class="finals-block">
           <div>
             <div class="finals-group-label">Grand Final</div>
-            <div id="match-M8" class="match-card"></div>
+            <div id="match-M10" class="match-card"></div>
           </div>
 
           <div>
             <div class="finals-group-label">Grand Final Reset (If Needed)</div>
-            <div id="match-M9" class="match-card"></div>
+            <div id="match-M11" class="match-card"></div>
             <div class="note">
               If the team coming from the Lower Bracket defeats the undefeated team in the first Grand Final series,
-              a reset (M9) may be played. Champion display below reflects the final result.
+              a reset (M11) may be played. Champion display below reflects the final result.
             </div>
           </div>
 
@@ -757,11 +758,13 @@
   M2: { id: 'M2', label: 'Upper Round 1 (4 Watervliet vs 5 Marcellus)' },
   M3: { id: 'M3', label: 'Upper Semifinal (1 St. Joseph vs winner of M2)' },
   M4: { id: 'M4', label: 'Upper Semifinal (2 West Ottawa vs winner of M1)' },
-  M5: { id: 'M5', label: 'Lower Round 1' },
-  M6: { id: 'M6', label: 'Lower Semifinal' },
-  M7: { id: 'M7', label: 'Lower Final' },
-  M8: { id: 'M8', label: 'Grand Final (First Series)' },
-  M9: { id: 'M9', label: 'Grand Final Reset (if needed)' }
+  M5: { id: 'M5', label: 'Upper Final (Winner of M3 vs Winner of M4)' },
+  M6: { id: 'M6', label: 'Lower Round 1 (Loser M1 vs Loser M2)' },
+  M7: { id: 'M7', label: 'Lower Round 2 (Winner M6 vs Loser M3)' },
+  M8: { id: 'M8', label: 'Lower Round 3 (Winner M7 vs Loser M4)' },
+  M9: { id: 'M9', label: 'Lower Final (Winner M8 vs Loser M5)' },
+  M10: { id: 'M10', label: 'Grand Final (First Series)' },
+  M11: { id: 'M11', label: 'Grand Final Reset (if needed)' }
 };
 
     function createEmptyMatchCard(id) {
