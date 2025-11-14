@@ -136,4 +136,478 @@
       font-size: 0.95rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      col
+      color: #bae6fd;
+    }
+
+    .panel-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      max-width: 420px;
+    }
+
+    .column-group {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .column-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .match-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 8px 8px 10px;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.7);
+    }
+
+    .match-id {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .match-label {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      margin-bottom: 4px;
+    }
+
+    .team-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2px 0;
+    }
+
+    .team-name {
+      font-size: 0.78rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 72%;
+    }
+
+    .team-name.tbd {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .score-pill {
+      min-width: 32px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      text-align: center;
+      font-size: 0.75rem;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+    }
+
+    .score-pill.winner {
+      border-color: rgba(34, 197, 94, 0.7);
+      color: #bbf7d0;
+      background: radial-gradient(circle at top, rgba(34, 197, 94, 0.2), rgba(15, 23, 42, 0.96));
+    }
+
+    .score-pill.loser {
+      border-color: rgba(239, 68, 68, 0.7);
+      color: #fecaca;
+    }
+
+    .note {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .teams-list {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .teams-list li {
+      margin-bottom: 2px;
+    }
+
+    .finals-block {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .finals-group-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .champion-banner {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: radial-gradient(circle at left, rgba(34, 197, 94, 0.24), rgba(15, 23, 42, 0.96));
+      border: 1px solid rgba(34, 197, 94, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+
+    .champion-title {
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      color: #bbf7d0;
+    }
+
+    .champion-name { font-size: 0.9rem; }
+    .champion-sub { font-size: 0.75rem; color: #a7f3d0; }
+
+    .status-pill {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+    }
+
+    .status-pill.live {
+      border-color: rgba(34, 197, 94, 0.7);
+      color: #bbf7d0;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="toolbar">
+      <div>
+        <h1>Scholastic Valorant – Double Elimination Bracket</h1>
+        <div class="subheading">
+          Live-view bracket for a six-team Valorant double-elimination event.
+          Scores and match labels are driven by the admin control panel and update automatically.
+        </div>
+      </div>
+      <div>
+        <div class="tag-row">
+          <div class="tag"><strong>Teams:</strong> 6</div>
+          <div class="tag"><strong>Format:</strong> Double Elim</div>
+          <div class="tag"><strong>Series:</strong> BO3 (GF may require two wins)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT: UPPER + LOWER BRACKETS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Bracket</div>
+            <div class="panel-sub">
+              Upper and Lower Brackets. Arrows and labels show progression; scores reflect series map wins.
+            </div>
+          </div>
+          <div class="status-pill" id="sync-status">
+            Last update: — 
+          </div>
+        </div>
+
+        <div class="column-group">
+          <!-- Column 1: Upper Round 1 -->
+          <div>
+            <div class="column-label">Upper Round 1</div>
+            <div id="match-M1" class="match-card"></div>
+            <div id="match-M2" class="match-card"></div>
+          </div>
+
+          <!-- Column 2: Upper Semi & Upper Final -->
+          <div>
+            <div class="column-label">Upper Path</div>
+            <div id="match-M3" class="match-card"></div>
+            <div id="match-M4" class="match-card"></div>
+          </div>
+
+          <!-- Column 3: Lower Bracket -->
+          <div>
+            <div class="column-label">Lower Bracket</div>
+            <div id="match-M5" class="match-card"></div>
+            <div id="match-M6" class="match-card"></div>
+            <div id="match-M7" class="match-card"></div>
+          </div>
+        </div>
+
+        <div class="note">
+          Bracket flow (who advances where) is set in the admin control panel. This public page simply reflects the
+          names and series scores applied there.
+        </div>
+      </div>
+
+      <!-- RIGHT: GRAND FINAL + TEAMS + CHAMPION -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Grand Final & Teams</div>
+            <div class="panel-sub">
+              Grand Final supports a reset series if the undefeated team loses the first match.
+            </div>
+          </div>
+        </div>
+
+        <div class="finals-block">
+          <div>
+            <div class="finals-group-label">Grand Final</div>
+            <div id="match-M8" class="match-card"></div>
+          </div>
+
+          <div>
+            <div class="finals-group-label">Grand Final Reset (If Needed)</div>
+            <div id="match-M9" class="match-card"></div>
+            <div class="note">
+              If the team coming from the Lower Bracket defeats the undefeated team in the first Grand Final series,
+              a reset (M9) may be played. Champion display below reflects the final result.
+            </div>
+          </div>
+
+          <div>
+            <div class="finals-group-label">Champion</div>
+            <div id="champion-display"></div>
+          </div>
+
+          <div>
+            <div class="finals-group-label">Seeded Teams</div>
+            <ul class="teams-list">
+              <li>1 – St. Joseph</li>
+              <li>2 – West Ottawa High School</li>
+              <li>3 – Buchanan High School</li>
+              <li>4 – Watervliet High School</li>
+              <li>5 – Marcellus High School</li>
+              <li>6 – Michigan Lutheran Highschool</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ======== VALORANT BACKEND API URL ====================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycby2qfCjs2NsQ9NgjC0c_4N9vGbSWERCKH2XISsrkW_bBPCJ9Gi6ucY3dpqmTXPCQrj-UQ/exec';
+    // ======================================================================
+
+    // Match metadata (default labels if backend doesn't provide any)
+    const matchDefinitions = {
+      M1: { id: 'M1', label: 'Upper Round 1 (2 vs 3)' },
+      M2: { id: 'M2', label: 'Upper Round 1 (4 vs 5)' },
+      M3: { id: 'M3', label: 'Upper Semifinal (1 vs winner of M2)' },
+      M4: { id: 'M4', label: 'Upper Final' },
+      M5: { id: 'M5', label: 'Lower Round 1' },
+      M6: { id: 'M6', label: 'Lower Semifinal' },
+      M7: { id: 'M7', label: 'Lower Final' },
+      M8: { id: 'M8', label: 'Grand Final (First Series)' },
+      M9: { id: 'M9', label: 'Grand Final Reset (if needed)' }
+    };
+
+    function createEmptyMatchCard(id) {
+      const def = matchDefinitions[id];
+      const card = document.getElementById(`match-${id}`);
+      if (!card) return;
+
+      card.innerHTML = `
+        <div class="match-id">${def.id}</div>
+        <div class="match-label">${def.label}</div>
+        <div class="team-row">
+          <span class="team-name tbd" id="match-${id}-t1-name">TBD</span>
+          <span class="score-pill" id="match-${id}-t1-score">0</span>
+        </div>
+        <div class="team-row">
+          <span class="team-name tbd" id="match-${id}-t2-name">TBD</span>
+          <span class="score-pill" id="match-${id}-t2-score">0</span>
+        </div>
+      `;
+    }
+
+    function initBracketShell() {
+      Object.keys(matchDefinitions).forEach(id => {
+        createEmptyMatchCard(id);
+      });
+
+      // Champion banner initial state
+      const championContainer = document.getElementById('champion-display');
+      championContainer.innerHTML = `
+        <div class="champion-banner">
+          <div>
+            <div class="champion-title">Champion</div>
+            <div class="champion-name">TBD</div>
+          </div>
+          <div class="champion-sub">
+            Once the final Valorant series is complete, the champion will be displayed here.
+          </div>
+        </div>
+      `;
+    }
+
+    function updateMatchFromData(id, matchData) {
+      const def = matchDefinitions[id];
+      const t1NameEl = document.getElementById(`match-${id}-t1-name`);
+      const t2NameEl = document.getElementById(`match-${id}-t2-name`);
+      const t1ScoreEl = document.getElementById(`match-${id}-t1-score`);
+      const t2ScoreEl = document.getElementById(`match-${id}-t2-score`);
+      const card = document.getElementById(`match-${id}`);
+
+      if (!card || !t1NameEl || !t2NameEl || !t1ScoreEl || !t2ScoreEl) return;
+
+      const t1Name = matchData?.t1Name?.trim() || '';
+      const t2Name = matchData?.t2Name?.trim() || '';
+      const t1ScoreStr = matchData?.t1Score ?? '';
+      const t2ScoreStr = matchData?.t2Score ?? '';
+
+      const t1Score = t1ScoreStr === '' ? null : Number(t1ScoreStr);
+      const t2Score = t2ScoreStr === '' ? null : Number(t2ScoreStr);
+
+      // Update names
+      if (t1Name) {
+        t1NameEl.textContent = t1Name;
+        t1NameEl.classList.remove('tbd');
+      } else {
+        t1NameEl.textContent = 'TBD';
+        t1NameEl.classList.add('tbd');
+      }
+
+      if (t2Name) {
+        t2NameEl.textContent = t2Name;
+        t2NameEl.classList.remove('tbd');
+      } else {
+        t2NameEl.textContent = 'TBD';
+        t2NameEl.classList.add('tbd');
+      }
+
+      // Reset pill classes
+      t1ScoreEl.className = 'score-pill';
+      t2ScoreEl.className = 'score-pill';
+
+      // If no numeric scores, keep them neutral
+      if (Number.isNaN(t1Score) || Number.isNaN(t2Score) || t1Score === null || t2Score === null) {
+        t1ScoreEl.textContent = t1ScoreStr || '0';
+        t2ScoreEl.textContent = t2ScoreStr || '0';
+        return;
+      }
+
+      t1ScoreEl.textContent = t1Score;
+      t2ScoreEl.textContent = t2Score;
+
+      if (t1Score === t2Score) {
+        // tie / undecided, keep neutral
+        return;
+      }
+
+      if (t1Score > t2Score) {
+        t1ScoreEl.classList.add('winner');
+        t2ScoreEl.classList.add('loser');
+      } else {
+        t2ScoreEl.classList.add('winner');
+        t1ScoreEl.classList.add('loser');
+      }
+    }
+
+    function applySnapshot(data) {
+      const matches = data?.matches || {};
+      // Update each match card from JSON
+      Object.keys(matchDefinitions).forEach(id => {
+        const m = matches[id] || {};
+        updateMatchFromData(id, m);
+      });
+
+      // Champion
+      const championName = (data?.championName || '').trim();
+      const championContainer = document.getElementById('champion-display');
+      championContainer.innerHTML = '';
+
+      const banner = document.createElement('div');
+      banner.className = 'champion-banner';
+
+      if (!championName) {
+        banner.innerHTML = `
+          <div>
+            <div class="champion-title">Champion</div>
+            <div class="champion-name">TBD</div>
+          </div>
+          <div class="champion-sub">
+            Once the tournament director confirms the final result in the control panel,
+            the champion will be displayed here.
+          </div>
+        `;
+      } else {
+        banner.innerHTML = `
+          <div>
+            <div class="champion-title">Champion</div>
+            <div class="champion-name">${championName}</div>
+          </div>
+          <div class="champion-sub">
+            Crowned after navigating the double-elimination bracket. Grand Final may have required two series wins.
+          </div>
+        `;
+      }
+
+      championContainer.appendChild(banner);
+
+      // Sync status
+      const syncStatus = document.getElementById('sync-status');
+      const ts = data?.updatedAt ? new Date(data.updatedAt) : null;
+      if (ts) {
+        syncStatus.classList.add('live');
+        syncStatus.textContent = `Last update: ${ts.toLocaleTimeString()}`;
+      } else {
+        syncStatus.classList.remove('live');
+        syncStatus.textContent = 'Last update: —';
+      }
+    }
+
+    async function fetchFromServer() {
+      try {
+        const res = await fetch(API_URL, { method: 'GET' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        applySnapshot(data);
+      } catch (err) {
+        console.error('Failed to fetch Valorant bracket data:', err);
+      }
+    }
+
+    function startLiveUpdates() {
+      // Initial fetch
+      fetchFromServer();
+      // Poll every 10 seconds
+      setInterval(fetchFromServer, 10000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initBracketShell();
+      startLiveUpdates();
+    });
+  </script>
+</body>
+</html>
