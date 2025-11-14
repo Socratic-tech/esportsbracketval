@@ -103,6 +103,7 @@
       gap: 6px;
       transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
       box-shadow: 0 0 0 rgba(56, 189, 248, 0);
+      text-decoration: none;
     }
 
     .btn:hover {
@@ -112,6 +113,22 @@
     }
 
     .btn .icon { font-size: 0.9rem; }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn-link {
+      text-decoration: none;
+      background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(56,189,248,0.3));
+      border-color: rgba(56,189,248,0.6);
+    }
+    .btn-link:hover {
+      background: linear-gradient(135deg, rgba(56,189,248,0.3), rgba(56,189,248,0.45));
+    }
 
     .layout {
       display: flex;
@@ -173,13 +190,21 @@
 
     .match-header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
       font-size: 0.72rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 6px;
+    }
+
+    .match-header span:nth-child(2) {
+      font-size: 0.8rem;
+      color: var(--text);
+      margin-top: 2px;
+      letter-spacing: normal;
+      text-transform: none;
     }
 
     .team-row {
@@ -368,9 +393,8 @@
       <div>
         <h1>Scholastic Rocket League – Round Robin + BO5 Finals</h1>
         <div class="subheading">
-          Group stage: best-of-3 (enter up to 3 game scores per match).
-          Standings update automatically. Grand Final is best-of-5 (first to 3 wins).
-          Finals teams stay hidden until all group matches are complete.
+          This bracket is read-only and updates live from the tournament control panel.
+          Group stage: BO3. Grand Final: BO5 (first to 3). Standings update automatically.
         </div>
       </div>
       <div>
@@ -380,17 +404,10 @@
           <div class="tag"><strong>Finals:</strong> BO5 series</div>
         </div>
         <div class="button-row">
-  <button type="button" class="btn" onclick="resetAll()"> Reset All
-    <span class="icon">↻</span>
-  </button>
-  <a href="https://socratic-tech.github.io/esportsbracketval/" class="btn btn-link" target="_blank" rel="noopener noreferrer">
-    🎯 View Valorant Bracket
-  </a>
-</div>
-
-
-          <span class="icon">↻</span>
-        </button>
+          <a class="btn btn-link" href="https://socratic-tech.github.io/esportsbracketval/" target="_blank" rel="noopener noreferrer">
+            🎯 View Valorant Bracket
+          </a>
+        </div>
       </div>
     </div>
 
@@ -411,7 +428,7 @@
         <div class="panel-header">
           <div>
             <div class="panel-title">Standings</div>
-            <div class="panel-sub">Calculated from per-game results</div>
+            <div class="panel-sub">Calculated from per-game results (live from server)</div>
           </div>
         </div>
         <table class="standings-table">
@@ -429,8 +446,8 @@
           <tbody id="standings-body"></tbody>
         </table>
         <div class="note">
-          GW/GL = games won/lost (not goals). Top two teams (highlighted) advance to the Grand Final
-          once all BO3 series have a winner. Tiebreakers: match wins → game differential → games won.
+          GW/GL = games won/lost. Top two teams (highlighted) advance to the Grand Final
+          once all BO3 series have a winner. Tiebreakers: match wins → game diff → games won.
         </div>
       </div>
 
@@ -462,13 +479,7 @@
           </div>
 
           <div class="match-footer" id="finals-status">
-            Enter all group scores first. Once the Grand Final pairing is locked,
-            enter each game score (up to 5; first to 3 wins) and click “Set Champion”.
-          </div>
-          <div style="margin-top:8px; display:flex; justify-content:flex-end;">
-            <button class="btn" onclick="setChampion()">
-              <span class="icon">🏆</span> Set Champion
-            </button>
+            Scores are read from the control panel. Once the Grand Final is complete, the champion is set automatically.
           </div>
         </div>
 
@@ -478,6 +489,11 @@
   </div>
 
   <script>
+    // ================= BACKEND CONFIG ============================
+    // Paste your Google Apps Script Web App URL here (same one the control page uses)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwA-hvLLr4l8tvPjviZK_M6rVlF6kXsdTe9GCBSLIvuhe_vuCLnG-FvPvzuisDAoPA-pg/exec';
+    // ============================================================
+
     // --- Data ---------------------------------------------------------------
     const teams = [
       { id: "T1", name: "Cassopolis" },
@@ -487,7 +503,6 @@
     ];
 
     // Single round robin matches (BO3)
-    // Order: 1 vs 2, 3 vs 4, 1 vs 3, 2 vs 4, 1 vs 4, 2 vs 3
     const groupMatches = [
       { id: "G1", t1: "T1", t2: "T2" },
       { id: "G2", t1: "T3", t2: "T4" },
@@ -499,7 +514,6 @@
 
     let champion = null;
 
-    // --- Helpers ------------------------------------------------------------
     function getTeamById(id) {
       return teams.find(t => t.id === id);
     }
@@ -515,13 +529,10 @@
         const card = document.createElement("div");
         card.className = "match-card";
         card.innerHTML = `
-        <div class="match-header" style="flex-direction:column; align-items:flex-start;">
-        <span>Match ${index + 1}</span>
-        <span style="font-size:0.8rem; color:var(--text); margin-top:2px;">
-        ${t1.name} vs ${t2.name}
-      </span>
-    </div>
-
+          <div class="match-header">
+            <span>Match ${index + 1}</span>
+            <span>${t1.name} vs ${t2.name}</span>
+          </div>
           <div class="team-row">
             <span>${t1.name}</span>
             <span style="text-align:right;">${t2.name}</span>
@@ -558,15 +569,9 @@
           </div>
           <div class="match-footer">
             BO3: First to 2 game wins takes the series.
-            Leave unused games blank. Ties in a single game are ignored.
           </div>
         `;
         container.appendChild(card);
-      });
-
-      // Attach listeners for group stage only
-      container.querySelectorAll(".score-input").forEach(input => {
-        input.addEventListener("input", recomputeStandings);
       });
     }
 
@@ -591,7 +596,6 @@
     }
 
     function computeSeriesOutcome(match) {
-      // Reads DOM for this match's 3 games, computes game wins and series winner
       let gamesWon1 = 0;
       let gamesWon2 = 0;
 
@@ -609,16 +613,13 @@
         const s2 = parseInt(s2Input.value, 10);
 
         if (Number.isNaN(s1) || Number.isNaN(s2)) continue;
-        if (s1 === s2) continue; // ignore ties
+        if (s1 === s2) continue;
 
-        if (s1 > s2) {
-          gamesWon1++;
-        } else {
-          gamesWon2++;
-        }
+        if (s1 > s2) gamesWon1++;
+        else gamesWon2++;
       }
 
-      const neededWins = 2; // BO3
+      const neededWins = 2;
       const complete =
         (gamesWon1 >= neededWins || gamesWon2 >= neededWins) &&
         gamesWon1 !== gamesWon2;
@@ -645,7 +646,6 @@
     }
 
     function recomputeStandings() {
-      // Initialize stats
       const stats = {};
       teams.forEach(t => {
         stats[t.id] = {
@@ -654,25 +654,22 @@
           matches: 0,
           wins: 0,
           losses: 0,
-          gf: 0, // games won
-          ga: 0  // games lost
+          gf: 0,
+          ga: 0
         };
       });
 
-      // Process each match
       groupMatches.forEach(m => {
         const outcome = computeSeriesOutcome(m);
         const t1Stats = stats[m.t1];
         const t2Stats = stats[m.t2];
 
-        // Count all valid game wins (even before series is complete)
         t1Stats.gf += outcome.games1;
         t1Stats.ga += outcome.games2;
         t2Stats.gf += outcome.games2;
         t2Stats.ga += outcome.games1;
 
         if (outcome.complete && outcome.winner) {
-          // Series counted as played
           t1Stats.matches++;
           t2Stats.matches++;
 
@@ -686,14 +683,13 @@
         }
       });
 
-      // Sort standings
       const standings = Object.values(stats).sort((a, b) => {
-        if (b.wins !== a.wins) return b.wins - a.wins; // more series wins
+        if (b.wins !== a.wins) return b.wins - a.wins;
         const gdA = a.gf - a.ga;
         const gdB = b.gf - b.ga;
-        if (gdB !== gdA) return gdB - gdA; // higher game diff
-        if (b.gf !== a.gf) return b.gf - a.gf; // more games won
-        return a.name.localeCompare(b.name); // alpha
+        if (gdB !== gdA) return gdB - gdA;
+        if (b.gf !== a.gf) return b.gf - a.gf;
+        return a.name.localeCompare(b.name);
       });
 
       const complete = allGroupMatchesComplete();
@@ -708,7 +704,6 @@
 
       standings.forEach((row, index) => {
         const tr = document.createElement("tr");
-        // Only highlight top 2 when group stage is complete
         if (complete && index < 2) tr.classList.add("top-seed");
 
         const gd = row.gf - row.ga;
@@ -741,11 +736,10 @@
         delete t2Span.dataset.teamId;
 
         finalsStatus.textContent =
-          "Enter all BO3 scores. Once every match has a series winner, the top 2 teams will appear here.";
+          "Waiting for all BO3 series to complete. Once done, the top 2 teams will appear here.";
         return;
       }
 
-      // Group stage complete: show finals teams
       t1Span.textContent = standings[0].name;
       t2Span.textContent = standings[1].name;
 
@@ -753,7 +747,7 @@
       t2Span.dataset.teamId = standings[1].teamId;
 
       finalsStatus.textContent =
-        "Grand Final pairing is locked. Enter each game's score (BO5, first to 3 wins) and click “Set Champion”.";
+        "Grand Final pairing is locked. Scores update live from the control panel.";
     }
 
     function computeFinalsOutcome() {
@@ -789,7 +783,7 @@
         else wins2++;
       }
 
-      const neededWins = 3; // BO5
+      const neededWins = 3;
       const complete =
         (wins1 >= neededWins || wins2 >= neededWins) && wins1 !== wins2;
 
@@ -799,24 +793,6 @@
       }
 
       return { complete, winner, wins1, wins2 };
-    }
-
-    function setChampion() {
-      if (!allGroupMatchesComplete()) {
-        alert("You must complete all group-stage BO3 series before setting a champion.");
-        return;
-      }
-
-      const outcome = computeFinalsOutcome();
-      if (!outcome.complete || !outcome.winner) {
-        alert(
-          "Grand Final is not complete. Make sure one team has at least 3 game wins (BO5) and no tie in total wins."
-        );
-        return;
-      }
-
-      champion = outcome.winner;
-      renderChampion();
     }
 
     function renderChampion() {
@@ -844,7 +820,7 @@
             <div class="champion-name">${team.name}</div>
           </div>
           <div class="champion-sub">
-            Crowned after a BO5 Grand Final (first to 3 game wins). Consider MVP and Positive Play awards too.
+            Crowned after a BO5 Grand Final (first to 3 game wins).
           </div>
         `;
       }
@@ -852,28 +828,82 @@
       container.appendChild(banner);
     }
 
-    function resetAll() {
-      if (!confirm("Reset all group scores and the Grand Final?")) return;
+    // ========== NEW: apply server snapshot to this bracket ==============
 
-      // Clear all score inputs (group + finals)
-      document.querySelectorAll(".score-input").forEach(input => {
-        input.value = "";
+    function applySnapshotFromServer(data) {
+      if (!data || !data.group || !data.finals) return;
+
+      // Apply group scores
+      groupMatches.forEach(m => {
+        const rec = data.group[m.id];
+        if (!rec) return;
+        for (let g = 1; g <= 3; g++) {
+          const gameRec = rec["g" + g];
+          if (!gameRec) continue;
+          const s1El = document.querySelector(
+            `.score-input[data-match-id="${m.id}"][data-game="${g}"][data-team="1"]`
+          );
+          const s2El = document.querySelector(
+            `.score-input[data-match-id="${m.id}"][data-game="${g}"][data-team="2"]`
+          );
+          if (s1El) s1El.value = gameRec.t1 ?? "";
+          if (s2El) s2El.value = gameRec.t2 ?? "";
+        }
       });
 
-      // Reset finals labels/datasets
-      const t1Span = document.getElementById("finals-team1-name");
-      const t2Span = document.getElementById("finals-team2-name");
-      t1Span.textContent = "Top Seed";
-      t2Span.textContent = "Second Seed";
-      delete t1Span.dataset.teamId;
-      delete t2Span.dataset.teamId;
+      // Apply finals scores
+      if (data.finals && Array.isArray(data.finals.games)) {
+        data.finals.games.forEach((gObj, idx) => {
+          const gameIndex = idx + 1;
+          const s1El = document.querySelector(
+            `.score-input[data-final-game="${gameIndex}"][data-team="1"]`
+          );
+          const s2El = document.querySelector(
+            `.score-input[data-final-game="${gameIndex}"][data-team="2"]`
+          );
+          if (s1El) s1El.value = gObj?.t1 ?? "";
+          if (s2El) s2El.value = gObj?.t2 ?? "";
+        });
+      }
 
-      document.getElementById("finals-status").textContent =
-        "Enter all BO3 scores first. Once the group stage is complete, the top 2 will appear here.";
-
-      champion = null;
-      renderChampion();
+      // Recompute everything
       recomputeStandings();
+
+      // Auto-set champion if finals complete
+      const finalsOutcome = computeFinalsOutcome();
+      if (finalsOutcome.complete && finalsOutcome.winner) {
+        champion = finalsOutcome.winner;
+      } else {
+        champion = null;
+      }
+      renderChampion();
+    }
+
+    async function fetchFromServer() {
+      if (!API_URL || API_URL.includes("PASTE_YOUR_APPS_SCRIPT")) {
+        console.warn("API_URL not set on Rocket League bracket page.");
+        return;
+      }
+      try {
+        const res = await fetch(API_URL, { method: "GET" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        applySnapshotFromServer(data);
+      } catch (e) {
+        console.error("Failed to fetch bracket data:", e);
+      }
+    }
+
+    function startLiveUpdates() {
+      // Make inputs read-only so viewers can't change state locally
+      document.querySelectorAll(".score-input").forEach(inp => {
+        inp.readOnly = true;
+      });
+
+      // Initial load
+      fetchFromServer();
+      // Poll every 10 seconds
+      setInterval(fetchFromServer, 10000);
     }
 
     // --- Init ---------------------------------------------------------------
@@ -881,6 +911,7 @@
     buildFinalsGames();
     recomputeStandings();
     renderChampion();
+    startLiveUpdates();
   </script>
 </body>
 </html>
