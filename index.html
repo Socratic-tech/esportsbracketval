@@ -2,34 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Scholastic Valorant Double-Elimination Bracket</title>
+  <title>Scholastic Valorant – Double Elimination Bracket</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg: #050814;
-      --panel: #0f172a;
-      --accent: #3b82f6;
-      --accent-soft: rgba(59,130,246,0.15);
+      --bg: #020617;
+      --panel: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.24);
       --text: #e5e7eb;
       --muted: #9ca3af;
       --border: #1f2937;
-      --danger: #ef4444;
       --success: #22c55e;
-      --shadow-soft: 0 18px 40px rgba(15,23,42,0.65);
+      --danger: #f97373;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.75);
       --radius-lg: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, Helvetica, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, #1e293b 0, #020617 55%);
+      background: radial-gradient(circle at top, #0b1120 0, #020617 55%);
       color: var(--text);
       padding: 24px;
       display: flex;
@@ -40,7 +37,7 @@
     h1 {
       margin: 0;
       font-size: 1.6rem;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: #f9fafb;
     }
@@ -48,14 +45,14 @@
     .subheading {
       font-size: 0.9rem;
       color: var(--muted);
-      max-width: 860px;
+      max-width: 960px;
     }
 
     .shell {
       background: radial-gradient(circle at top, #020617 0, #020617 100%);
       border-radius: 24px;
       padding: 18px 20px;
-      border: 1px solid rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.16);
       box-shadow: var(--shadow-soft);
       display: flex;
       flex-direction: column;
@@ -81,8 +78,8 @@
     .tag {
       border-radius: 999px;
       padding: 4px 10px;
-      border: 1px solid rgba(148,163,184,0.4);
-      background: radial-gradient(circle at top, rgba(148,163,184,0.08), transparent);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: radial-gradient(circle at top, rgba(148, 163, 184, 0.08), transparent);
       color: var(--muted);
       display: inline-flex;
       align-items: center;
@@ -94,660 +91,49 @@
       font-weight: 600;
     }
 
-    .btn-reset {
-      border-radius: 999px;
-      padding: 6px 14px;
-      border: 1px solid rgba(248,250,252,0.15);
-      background: linear-gradient(135deg, #020617, #020617);
-      color: #f9fafb;
-      cursor: pointer;
-      font-size: 0.85rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
-      box-shadow: 0 0 0 rgba(59,130,246,0);
-    }
-
-    .btn-reset:hover {
-      background: linear-gradient(135deg, #020617, #020617);
-      box-shadow: 0 0 0 1px rgba(59,130,246,0.4);
-      transform: translateY(-1px);
-    }
-
-    .btn-reset span.icon {
-      font-size: 0.9rem;
-    }
-
-    .bracket-layout {
-      display: flex;
-      flex-wrap: wrap;
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
       gap: 18px;
     }
 
-    .bracket-column {
-      flex: 1 1 260px;
-      min-width: 260px;
-      background: radial-gradient(circle at top left, rgba(59,130,246,0.12), rgba(15,23,42,0.9));
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      body { padding: 16px; }
+      h1 { font-size: 1.3rem; }
+      .shell { padding: 16px 14px; }
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, var(--accent-soft), rgba(15, 23, 42, 0.94));
       border-radius: var(--radius-lg);
-      border: 1px solid rgba(30,64,175,0.5);
+      border: 1px solid rgba(37, 99, 235, 0.5);
       padding: 14px 12px;
       position: relative;
       overflow: hidden;
     }
 
-    .bracket-column::before {
+    .panel::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at top, rgba(56,189,248,0.12), transparent 60%);
-      opacity: 0.3;
+      background: radial-gradient(circle at top, rgba(59, 130, 246, 0.14), transparent 60%);
+      opacity: 0.4;
       pointer-events: none;
     }
 
-    .column-header {
+    .panel-header {
       position: relative;
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    .column-title {
+    .panel-title {
       font-size: 0.95rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      color: #bfdbfe;
-    }
-
-    .column-sub {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
-    .match {
-      position: relative;
-      z-index: 1;
-      background: rgba(15,23,42,0.9);
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,0.38);
-      padding: 8px 8px 9px;
-      margin-bottom: 10px;
-      box-shadow: 0 10px 20px rgba(15,23,42,0.7);
-    }
-
-    .match-label {
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .match-label span.id {
-      opacity: 0.7;
-    }
-
-    .team-row {
-      display: flex;
-      margin: 2px 0;
-    }
-
-    .team-btn {
-      flex: 1;
-      border-radius: 999px;
-      border: 1px solid rgba(107, 114, 128, 0.7);
-      padding: 6px 9px;
-      background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(15,23,42,0.9));
-      color: var(--text);
-      font-size: 0.8rem;
-      text-align: left;
-      display: inline-flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      cursor: pointer;
-      transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.08s ease, border-color 0.12s ease;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .team-btn span.meta {
-      font-size: 0.72rem;
-      color: var(--muted);
-    }
-
-    .team-btn:hover:not(:disabled) {
-      background: radial-gradient(circle at top, rgba(59,130,246,0.3), rgba(15,23,42,0.95));
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(59,130,246,0.7);
-      transform: translateY(-0.5px);
-    }
-
-    .team-btn:disabled {
-      cursor: default;
-      opacity: 0.6;
-      box-shadow: none;
-    }
-
-    .team-btn.empty {
-      border-style: dashed;
-      font-style: italic;
-      color: var(--muted);
-    }
-
-    .match-status {
-      margin-top: 6px;
-      font-size: 0.75rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .match-status .winner {
-      color: var(--success);
-      font-weight: 600;
-    }
-
-    .note {
-      margin-top: 4px;
-      font-size: 0.72rem;
-      color: #93c5fd;
-    }
-
-    .champion-banner {
-      margin-top: 8px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: radial-gradient(circle at left, rgba(34,197,94,0.24), rgba(15,23,42,0.96));
-      border: 1px solid rgba(34,197,94,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 0.85rem;
-    }
-
-    .champion-title {
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      color: #bbf7d0;
-    }
-
-    .champion-name {
-      font-size: 0.9rem;
-    }
-
-    .champion-sub {
-      font-size: 0.75rem;
-      color: #a7f3d0;
-    }
-
-    @media (max-width: 720px) {
-      body {
-        padding: 16px;
-      }
-      h1 {
-        font-size: 1.3rem;
-      }
-      .shell {
-        padding: 14px 14px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="shell">
-    <div class="toolbar">
-      <div>
-        <h1>Scholastic Valorant Double-Elimination Bracket</h1>
-        <div class="subheading">
-          Click a team in each match to advance them. Losers drop to the lower bracket
-          until they have two losses. If the lower-bracket winner defeats the
-          undefeated team in the Grand Final, a second deciding Grand Final is played.
-        </div>
-      </div>
-      <div class="toolbar-right">
-        <div class="tag-row">
-          <div class="tag"><strong>Teams:</strong> 5</div>
-          <div class="tag"><strong>Format:</strong> Double Elim</div>
-          <div class="tag"><strong>Finals:</strong> Must-win-twice rule</div>
-        </div>
-        <button class="btn-reset" onclick="resetTournament()">
-          <span class="icon">↻</span>
-          Reset Bracket
-        </button>
-        <a href="https://socratic-tech.github.io/esportsbracketval/rocket.html" class="btn btn-link" target="_blank" rel="noopener noreferrer">
-    🎯 View Rocket League Bracket
-  </a>
-        </button>
-</div>
-    </div>
-
-    <div class="bracket-layout">
-      <div class="bracket-column">
-        <div class="column-header">
-          <div>
-            <div class="column-title">Upper Bracket</div>
-            <div class="column-sub">Winners stay; first loss sends teams down</div>
-          </div>
-        </div>
-        <div id="upper-bracket"></div>
-      </div>
-
-      <div class="bracket-column">
-        <div class="column-header">
-          <div>
-            <div class="column-title">Lower Bracket</div>
-            <div class="column-sub">Survival path; second loss eliminates</div>
-          </div>
-        </div>
-        <div id="lower-bracket"></div>
-      </div>
-
-      <div class="bracket-column">
-        <div class="column-header">
-          <div>
-            <div class="column-title">Finals</div>
-            <div class="column-sub">Undefeated vs lower-bracket winner</div>
-          </div>
-        </div>
-        <div id="finals-bracket"></div>
-        <div id="champion-display"></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // --- Base data -----------------------------------------------------------
-    const baseTeams = [
-      { id: "T1", name: "St. Joseph", seed: 1 },
-      { id: "T2", name: "West Ottawa High School", seed: 2 },
-      { id: "T3", name: "Buchanan High School", seed: 3 },
-      { id: "T4", name: "Watervliet High School", seed: 4 },
-      { id: "T5", name: "Marcellus High School", seed: 5 }
-    ];
-
-    // Match wiring:
-    //  M1: #4 vs #5     (UB Round 1)
-    //  M2: #1 vs W(M1)  (UB Semi)
-    //  M3: #2 vs #3     (UB Semi)
-    //  M4: W(M2) vs W(M3)  (UB Final -> undefeated to GF1)
-    //  M5: L(M1) vs L(M2)  (LB Round 1)
-    //  M6: W(M5) vs L(M3)  (LB Semi)
-    //  M7: W(M6) vs L(M4)  (LB Final -> winner to GF1)
-    //  GF1: W(M4) vs W(M7) (if lower bracket team wins, play GF2)
-    //  GF2: Same teams, winner is champion (bracket reset)
-    const baseMatches = [
-      {
-        id: "M1",
-        shortId: "M1",
-        bracket: "Upper",
-        order: 1,
-        label: "Match 1 – Upper Round 1",
-        team1Seed: 4,
-        team2Seed: 5,
-        winnerTo: { matchId: "M2", slot: "team2" },
-        loserTo: { matchId: "M5", slot: "team1" }
-      },
-      {
-        id: "M2",
-        shortId: "M2",
-        bracket: "Upper",
-        order: 2,
-        label: "Match 2 – Upper Semifinal",
-        team1Seed: 1,
-        winnerTo: { matchId: "M4", slot: "team1" },
-        loserTo: { matchId: "M5", slot: "team2" }
-      },
-      {
-        id: "M3",
-        shortId: "M3",
-        bracket: "Upper",
-        order: 3,
-        label: "Match 3 – Upper Semifinal",
-        team1Seed: 2,
-        team2Seed: 3,
-        winnerTo: { matchId: "M4", slot: "team2" },
-        loserTo: { matchId: "M6", slot: "team2" }
-      },
-      {
-        id: "M4",
-        shortId: "M4",
-        bracket: "Upper",
-        order: 4,
-        label: "Match 4 – Upper Bracket Final",
-        winnerTo: { matchId: "GF1", slot: "team1" },
-        loserTo: { matchId: "M7", slot: "team2" }
-      },
-      {
-        id: "M5",
-        shortId: "M5",
-        bracket: "Lower",
-        order: 5,
-        label: "Match 5 – Lower Round 1",
-        winnerTo: { matchId: "M6", slot: "team1" }
-      },
-      {
-        id: "M6",
-        shortId: "M6",
-        bracket: "Lower",
-        order: 6,
-        label: "Match 6 – Lower Semifinal",
-        winnerTo: { matchId: "M7", slot: "team1" }
-      },
-      {
-        id: "M7",
-        shortId: "M7",
-        bracket: "Lower",
-        order: 7,
-        label: "Match 7 – Lower Final",
-        winnerTo: { matchId: "GF1", slot: "team2" }
-      },
-      {
-        id: "GF1",
-        shortId: "GF1",
-        bracket: "Finals",
-        order: 8,
-        label: "Grand Final – Match 1",
-        isGrandFinal1: true
-      },
-      {
-        id: "GF2",
-        shortId: "GF2",
-        bracket: "Finals",
-        order: 9,
-        label: "Grand Final – Match 2 (if needed)",
-        isGrandFinal2: true
-      }
-    ];
-
-    let state = null;
-
-    function buildInitialState() {
-      const teams = {};
-      const teamIdBySeed = {};
-
-      baseTeams.forEach(t => {
-        teams[t.id] = {
-          id: t.id,
-          name: t.name,
-          seed: t.seed,
-          losses: 0
-        };
-        teamIdBySeed[t.seed] = t.id;
-      });
-
-      const matches = {};
-      baseMatches.forEach(m => {
-        matches[m.id] = {
-          id: m.id,
-          shortId: m.shortId,
-          bracket: m.bracket,
-          order: m.order,
-          label: m.label,
-          winnerTo: m.winnerTo || null,
-          loserTo: m.loserTo || null,
-          isGrandFinal1: !!m.isGrandFinal1,
-          isGrandFinal2: !!m.isGrandFinal2,
-          team1: null,
-          team2: null,
-          winner: null,
-          loser: null
-        };
-
-        // Seed static teams
-        if (m.team1Seed) {
-          matches[m.id].team1 = teamIdBySeed[m.team1Seed];
-        }
-        if (m.team2Seed) {
-          matches[m.id].team2 = teamIdBySeed[m.team2Seed];
-        }
-      });
-
-      return {
-        teams,
-        matches,
-        champion: null,
-        gfReset: false // true if a bracket reset occurred (GF2 used)
-      };
-    }
-
-    // --- Rendering -----------------------------------------------------------
-    function renderBracket() {
-      const upper = document.getElementById("upper-bracket");
-      const lower = document.getElementById("lower-bracket");
-      const finals = document.getElementById("finals-bracket");
-      const champ = document.getElementById("champion-display");
-
-      upper.innerHTML = "";
-      lower.innerHTML = "";
-      finals.innerHTML = "";
-      champ.innerHTML = "";
-
-      const matchesArr = Object.values(state.matches).sort(
-        (a, b) => a.order - b.order
-      );
-
-      matchesArr.forEach(match => {
-        const matchEl = document.createElement("div");
-        matchEl.className = "match";
-        matchEl.innerHTML = makeMatchHTML(match);
-
-        if (match.bracket === "Upper") {
-          upper.appendChild(matchEl);
-        } else if (match.bracket === "Lower") {
-          lower.appendChild(matchEl);
-        } else {
-          finals.appendChild(matchEl);
-        }
-      });
-
-      // Champion banner
-      const champWrapper = document.createElement("div");
-      champWrapper.className = "champion-banner";
-
-      const left = document.createElement("div");
-      left.innerHTML =
-        '<div class="champion-title">Champion</div><div class="champion-name">' +
-        (state.champion ? state.teams[state.champion].name : "TBD") +
-        "</div>";
-
-      const right = document.createElement("div");
-      if (!state.champion) {
-        right.innerHTML =
-          '<div class="champion-sub">Winner appears here once the Grand Final (and reset, if needed) is complete.</div>';
-      } else {
-        const resetText = state.gfReset
-          ? "Won after bracket reset (lower-bracket team defeated undefeated finalist twice)."
-          : "Won Grand Final without reset (undefeated run).";
-        right.innerHTML =
-          '<div class="champion-sub">' + resetText + "</div>";
-      }
-
-      champWrapper.appendChild(left);
-      champWrapper.appendChild(right);
-      champ.appendChild(champWrapper);
-    }
-
-    function makeMatchHTML(match) {
-      const team1 = match.team1 ? state.teams[match.team1] : null;
-      const team2 = match.team2 ? state.teams[match.team2] : null;
-      const hasWinner = !!match.winner;
-      const disabled = hasWinner || !!state.champion;
-
-      function teamButton(slot, team) {
-        if (!team) {
-          return '<button class="team-btn empty" disabled>TBD</button>';
-        }
-        const lossLabel = team.losses + "L";
-        const disabledAttr = disabled ? "disabled" : "";
-        return (
-          '<button class="team-btn" ' +
-          disabledAttr +
-          ' onclick="declareWinner(\'' +
-          match.id +
-          "', '" +
-          slot +
-          "')\">" +
-          '<span class="name">' +
-          team.name +
-          "</span>" +
-          '<span class="meta">Seed ' +
-          team.seed +
-          " · " +
-          lossLabel +
-          "</span>" +
-          "</button>"
-        );
-      }
-
-      let status;
-      if (hasWinner) {
-        status =
-          '<span>Result:</span><span class="winner">' +
-          state.teams[match.winner].name +
-          "</span>";
-      } else if (team1 && team2) {
-        status = "<span>Click a team above to advance the winner.</span>";
-      } else {
-        status = "<span>Waiting for teams...</span>";
-      }
-
-      let note = "";
-      if (match.isGrandFinal1) {
-        note =
-          '<div class="note">If the lower-bracket team wins this match, a second deciding Grand Final (GF2) is played.</div>';
-      } else if (match.isGrandFinal2) {
-        note =
-          '<div class="note">Only played if Grand Final 1 is won by the lower-bracket team (bracket reset).</div>';
-      }
-
-      return (
-        '<div class="match-label"><span>' +
-        match.label +
-        "</span><span class=\"id\">" +
-        match.shortId +
-        "</span></div>" +
-        '<div class="team-row">' +
-        teamButton("team1", team1) +
-        "</div>" +
-        '<div class="team-row">' +
-        teamButton("team2", team2) +
-        "</div>" +
-        '<div class="match-status">' +
-        status +
-        "</div>" +
-        note
-      );
-    }
-
-    // --- Game logic ---------------------------------------------------------
-    function declareWinner(matchId, slot) {
-      const match = state.matches[matchId];
-      if (!match || state.champion) return;
-
-      if (match.winner) {
-        alert(
-          "This match already has a recorded winner. Use Reset Bracket to start over."
-        );
-        return;
-      }
-
-      const winnerTeamId = match[slot];
-      const loserTeamId = slot === "team1" ? match.team2 : match.team1;
-
-      if (!winnerTeamId || !loserTeamId) {
-        alert("Both team slots must be filled before selecting a winner.");
-        return;
-      }
-
-      match.winner = winnerTeamId;
-      match.loser = loserTeamId;
-
-      const loserTeam = state.teams[loserTeamId];
-      loserTeam.losses += 1;
-
-      // Non-final matches propagate winner/loser along bracket
-      if (!match.isGrandFinal1 && !match.isGrandFinal2) {
-        if (match.winnerTo) {
-          const nextMatch = state.matches[match.winnerTo.matchId];
-          if (nextMatch) {
-            nextMatch[match.winnerTo.slot] = winnerTeamId;
-          }
-        }
-        if (match.loserTo && loserTeam.losses < 2) {
-          const nextMatch = state.matches[match.loserTo.matchId];
-          if (nextMatch) {
-            nextMatch[match.loserTo.slot] = loserTeamId;
-          }
-        }
-      } else if (match.isGrandFinal1) {
-        handleGrandFinal1Result(match, winnerTeamId, loserTeamId);
-      } else if (match.isGrandFinal2) {
-        handleGrandFinal2Result(match, winnerTeamId, loserTeamId);
-      }
-
-      renderBracket();
-    }
-
-    function handleGrandFinal1Result(match, winnerTeamId, loserTeamId) {
-      const loser = state.teams[loserTeamId];
-
-      // If the loser now has 2 losses, tournament ends here
-      if (loser.losses >= 2) {
-        state.champion = winnerTeamId;
-        state.gfReset = false;
-        return;
-      }
-
-      // Otherwise, this means the previously undefeated team just took its first loss.
-      // Lower-bracket team has also (still) 1 loss, so we trigger bracket reset: GF2.
-      state.gfReset = true;
-      const gf2 = state.matches["GF2"];
-
-      if (gf2) {
-        // Same two teams play again
-        gf2.team1 = match.team1;
-        gf2.team2 = match.team2;
-      }
-    }
-
-    function handleGrandFinal2Result(match, winnerTeamId, loserTeamId) {
-      // Second Grand Final is always the ultimate decider.
-      state.champion = winnerTeamId;
-      const loser = state.teams[loserTeamId];
-      loser.losses += 0; // already incremented when declareWinner was called
-    }
-
-    function resetTournament() {
-      if (
-        !confirm(
-          "Reset the entire bracket? All match results will be cleared."
-        )
-      ) {
-        return;
-      }
-      state = buildInitialState();
-      renderBracket();
-    }
-
-    // Expose for inline onclick handlers
-    window.declareWinner = declareWinner;
-    window.resetTournament = resetTournament;
-
-    // Initialize
-    state = buildInitialState();
-    renderBracket();
-  </script>
-</body>
-</html>
+      col
