@@ -60,24 +60,37 @@
     }
 
     @keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
 
-@keyframes popBig {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
-}
+    @keyframes popBig {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.08);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
 
-.pop-animation {
-  animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+    .pop-animation {
+      animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
 
-.pop-big-animation {
-  animation: popBig 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+    .pop-big-animation {
+      animation: popBig 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -294,6 +307,7 @@
         0 10px 25px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(148, 163, 184, 0.1);
       transition: all 0.3s ease;
+      cursor: pointer;
       animation: fadeIn 0.5s ease-out backwards;
     }
 
@@ -503,10 +517,6 @@
         inset 0 1px 0 rgba(34, 197, 94, 0.3);
     }
 
-    .match-card {
-      cursor: pointer;
-    }
-
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -661,7 +671,7 @@
         <div class="tag-row">
           <div class="tag"><strong>Teams:</strong> 6</div>
           <div class="tag"><strong>Format:</strong> Double Elim</div>
-          <div class="tag"><strong>Series:</strong> BO1 (Finals may require two wins)</div>
+          <div class="tag"><strong>Series:</strong> BO3 (GF may require two wins)</div>
         </div>
       </div>
     </div>
@@ -786,11 +796,12 @@
   M11: { id: 'M11', label: 'Grand Final Reset (if needed)' }
 };
 
+    // Store previous state to detect changes
     let previousState = {
-  matches: {},
-  champion: null
-};
-    
+      matches: {},
+      champion: null
+    };
+
     function createEmptyMatchCard(id) {
       const def = matchDefinitions[id];
       const card = document.getElementById(`match-${id}`);
@@ -818,7 +829,7 @@
       // Champion banner initial state
       const championContainer = document.getElementById('champion-display');
       championContainer.innerHTML = `
-        <div class="champion-banner">
+        <div class="champion-banner" id="champion-banner">
           <div>
             <div class="champion-title">Champion</div>
             <div class="champion-name">TBD</div>
@@ -828,6 +839,27 @@
           </div>
         </div>
       `;
+    }
+
+    function triggerPopAnimation(elementId, isBig = false) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+
+      const animationClass = isBig ? 'pop-big-animation' : 'pop-animation';
+      
+      // Remove animation class if it exists
+      element.classList.remove('pop-animation', 'pop-big-animation');
+      
+      // Trigger reflow to restart animation
+      void element.offsetWidth;
+      
+      // Add animation class
+      element.classList.add(animationClass);
+      
+      // Remove class after animation completes
+      setTimeout(() => {
+        element.classList.remove(animationClass);
+      }, isBig ? 600 : 400);
     }
 
     function updateMatchFromData(id, matchData) {
@@ -847,6 +879,11 @@
 
       const t1Score = t1ScoreStr === '' ? null : Number(t1ScoreStr);
       const t2Score = t2ScoreStr === '' ? null : Number(t2ScoreStr);
+
+      // Check if scores changed
+      const prevMatch = previousState.matches[id];
+      const scoresChanged = prevMatch && 
+        (prevMatch.t1Score !== t1ScoreStr || prevMatch.t2Score !== t2ScoreStr);
 
       // Update names
       if (t1Name) {
@@ -873,43 +910,31 @@
       if (Number.isNaN(t1Score) || Number.isNaN(t2Score) || t1Score === null || t2Score === null) {
         t1ScoreEl.textContent = t1ScoreStr || '0';
         t2ScoreEl.textContent = t2ScoreStr || '0';
-        return;
-      }
-
-      t1ScoreEl.textContent = t1Score;
-      t2ScoreEl.textContent = t2Score;
-
-      if (t1Score === t2Score) {
-        // tie / undecided, keep neutral
-        return;
-      }
-
-      if (t1Score > t2Score) {
-        t1ScoreEl.classList.add('winner');
-        t2ScoreEl.classList.add('loser');
       } else {
-        t2ScoreEl.classList.add('winner');
-        t1ScoreEl.classList.add('loser');
+        t1ScoreEl.textContent = t1Score;
+        t2ScoreEl.textContent = t2Score;
+
+        if (t1Score !== t2Score) {
+          if (t1Score > t2Score) {
+            t1ScoreEl.classList.add('winner');
+            t2ScoreEl.classList.add('loser');
+          } else {
+            t2ScoreEl.classList.add('winner');
+            t1ScoreEl.classList.add('loser');
+          }
+        }
       }
-      // Check if scores changed
-const prevMatch = previousState.matches[id];
-const scoresChanged = prevMatch && 
-  (prevMatch.t1Score !== t1ScoreStr || prevMatch.t2Score !== t2ScoreStr);
 
-// ... (rest of your existing code to update the display)
+      // Trigger pop animation if scores changed
+      if (scoresChanged) {
+        triggerPopAnimation(`match-${id}`, false);
+      }
 
-// At the end of the function, after updating the UI:
-if (scoresChanged) {
-  triggerPopAnimation(`match-${id}`, false);
-}
-
-// Update previous state
-previousState.matches[id] = {
-  t1Score: t1ScoreStr,
-  t2Score: t2ScoreStr
-};
-
-
+      // Update previous state
+      previousState.matches[id] = {
+        t1Score: t1ScoreStr,
+        t2Score: t2ScoreStr
+      };
     }
 
     function applySnapshot(data) {
@@ -923,10 +948,15 @@ previousState.matches[id] = {
       // Champion
       const championName = (data?.championName || '').trim();
       const championContainer = document.getElementById('champion-display');
+      
+      // Check if champion changed
+      const championChanged = previousState.champion !== championName && championName !== '';
+      
       championContainer.innerHTML = '';
 
       const banner = document.createElement('div');
       banner.className = 'champion-banner';
+      banner.id = 'champion-banner';
 
       if (!championName) {
         banner.innerHTML = `
@@ -950,19 +980,18 @@ previousState.matches[id] = {
           </div>
         `;
       }
-// Before creating the banner:
-const championChanged = previousState.champion !== championName && championName !== '';
 
-// After appending the banner to container:
-if (championChanged) {
-  setTimeout(() => {
-    triggerPopAnimation('champion-banner', true);
-  }, 100);
-}
-
-// Update previous champion state
-previousState.champion = championName;
       championContainer.appendChild(banner);
+
+      // Trigger pop animation if champion changed
+      if (championChanged) {
+        setTimeout(() => {
+          triggerPopAnimation('champion-banner', true);
+        }, 100);
+      }
+
+      // Update previous champion state
+      previousState.champion = championName;
 
       // Sync status
       const syncStatus = document.getElementById('sync-status');
@@ -994,27 +1023,6 @@ previousState.champion = championName;
       setInterval(fetchFromServer, 10000);
     }
 
-    function triggerPopAnimation(elementId, isBig = false) {
-  const element = document.getElementById(elementId);
-  if (!element) return;
-
-  const animationClass = isBig ? 'pop-big-animation' : 'pop-animation';
-  
-  // Remove animation class if it exists
-  element.classList.remove('pop-animation', 'pop-big-animation');
-  
-  // Trigger reflow to restart animation
-  void element.offsetWidth;
-  
-  // Add animation class
-  element.classList.add(animationClass);
-  
-  // Remove class after animation completes
-  setTimeout(() => {
-    element.classList.remove(animationClass);
-  }, isBig ? 600 : 400);
-}
-    
     window.addEventListener('DOMContentLoaded', () => {
       initBracketShell();
       startLiveUpdates();
