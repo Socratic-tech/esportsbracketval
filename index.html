@@ -59,6 +59,25 @@
       }
     }
 
+    @keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes popBig {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.pop-animation {
+  animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pop-big-animation {
+  animation: popBig 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
     body {
       margin: 0;
       min-height: 100vh;
@@ -767,6 +786,11 @@
   M11: { id: 'M11', label: 'Grand Final Reset (if needed)' }
 };
 
+    let previousState = {
+  matches: {},
+  champion: null
+};
+    
     function createEmptyMatchCard(id) {
       const def = matchDefinitions[id];
       const card = document.getElementById(`match-${id}`);
@@ -867,6 +891,25 @@
         t2ScoreEl.classList.add('winner');
         t1ScoreEl.classList.add('loser');
       }
+      // Check if scores changed
+const prevMatch = previousState.matches[id];
+const scoresChanged = prevMatch && 
+  (prevMatch.t1Score !== t1ScoreStr || prevMatch.t2Score !== t2ScoreStr);
+
+// ... (rest of your existing code to update the display)
+
+// At the end of the function, after updating the UI:
+if (scoresChanged) {
+  triggerPopAnimation(`match-${id}`, false);
+}
+
+// Update previous state
+previousState.matches[id] = {
+  t1Score: t1ScoreStr,
+  t2Score: t2ScoreStr
+};
+
+
     }
 
     function applySnapshot(data) {
@@ -907,7 +950,18 @@
           </div>
         `;
       }
+// Before creating the banner:
+const championChanged = previousState.champion !== championName && championName !== '';
 
+// After appending the banner to container:
+if (championChanged) {
+  setTimeout(() => {
+    triggerPopAnimation('champion-banner', true);
+  }, 100);
+}
+
+// Update previous champion state
+previousState.champion = championName;
       championContainer.appendChild(banner);
 
       // Sync status
@@ -940,6 +994,27 @@
       setInterval(fetchFromServer, 10000);
     }
 
+    function triggerPopAnimation(elementId, isBig = false) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+
+  const animationClass = isBig ? 'pop-big-animation' : 'pop-animation';
+  
+  // Remove animation class if it exists
+  element.classList.remove('pop-animation', 'pop-big-animation');
+  
+  // Trigger reflow to restart animation
+  void element.offsetWidth;
+  
+  // Add animation class
+  element.classList.add(animationClass);
+  
+  // Remove class after animation completes
+  setTimeout(() => {
+    element.classList.remove(animationClass);
+  }, isBig ? 600 : 400);
+}
+    
     window.addEventListener('DOMContentLoaded', () => {
       initBracketShell();
       startLiveUpdates();
