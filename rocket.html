@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Scholastic Rocket League – Championship Dashboard</title>
+  <title>Scholastic Rocket League – Live Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,6 @@
       --rl-orange: #ff8d00;
       --text-main: #ece8e1;
       --text-muted: #6f7b9b;
-      --border: rgba(0, 157, 255, 0.1);
     }
 
     * { box-sizing: border-box; }
@@ -28,320 +27,99 @@
       font-family: 'Rajdhani', sans-serif;
       background-color: var(--bg-dark);
       color: var(--text-main);
-      overflow-x: hidden;
       padding: 20px;
       display: flex;
       flex-direction: column;
     }
 
-    /* --- BACKGROUND GRID --- */
     .bg-grid {
-      position: fixed;
-      top: 0; left: 0; width: 200%; height: 200%;
-      background-image: 
-        linear-gradient(rgba(0, 157, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 157, 255, 0.03) 1px, transparent 1px);
+      position: fixed; top: 0; left: 0; width: 200%; height: 200%;
+      background-image: linear-gradient(rgba(0, 157, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 157, 255, 0.03) 1px, transparent 1px);
       background-size: 50px 50px;
       z-index: -1;
-      animation: gridMove 40s linear infinite;
-      pointer-events: none;
+      animation: gridMove 60s linear infinite;
     }
+    @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(-50px, -50px); } }
 
-    @keyframes gridMove {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-50px, -50px); }
-    }
-
-    /* --- HEADER --- */
     .header-block {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 24px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
     }
+    h1 { font-size: 2.2rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
+    .sub-h1 { font-family: 'Share Tech Mono'; color: var(--rl-orange); font-size: 0.9rem; margin-top: 5px; }
+    
+    .status-pill {
+      font-family: 'Share Tech Mono'; font-size: 0.8rem; color: var(--rl-blue);
+      background: rgba(0,157,255,0.1); padding: 5px 12px; border: 1px solid rgba(0,157,255,0.3);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .pulse { width: 8px; height: 8px; background: var(--rl-blue); border-radius: 50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%{opacity:1} 50%{opacity:0.3} 100%{opacity:1} }
 
-    h1 {
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: 2.2rem;
-      margin: 0;
-      letter-spacing: 1px;
-      line-height: 1;
-      color: var(--text-main);
-      text-shadow: 0 0 20px rgba(0, 157, 255, 0.4);
+    .grid-layout {
+      display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px;
+      width: 100%; max-width: 1600px; margin: 0 auto;
     }
-
-    .sub-h1 {
-      font-family: 'Share Tech Mono', monospace;
-      color: var(--rl-orange);
-      font-size: 0.9rem;
-      margin-top: 4px;
-      letter-spacing: 1px;
-    }
-
-    .live-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.8rem;
-      color: var(--rl-blue);
-      background: rgba(0, 157, 255, 0.05);
-      padding: 6px 16px;
-      border: 1px solid rgba(0, 157, 255, 0.3);
-      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-    }
-
-    .pulse-dot {
-      width: 8px; height: 8px;
-      background: var(--rl-blue);
-      border-radius: 50%;
-      animation: pulseBlue 2s infinite;
-    }
-
-    @keyframes pulseBlue {
-      0% { box-shadow: 0 0 0 0 rgba(0, 157, 255, 0.7); }
-      70% { box-shadow: 0 0 0 6px rgba(0, 157, 255, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(0, 157, 255, 0); }
-    }
-
-    /* --- LAYOUT --- */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 350px 1fr 350px; /* Standings | Matches | Finals */
-      gap: 20px;
-      width: 100%;
-      max-width: 1600px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 1200px) {
-      .dashboard-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 1100px) { .grid-layout { grid-template-columns: 1fr; } }
 
     .panel {
-      background: rgba(20, 27, 45, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 20px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      background: rgba(20, 27, 45, 0.9); border: 1px solid rgba(255,255,255,0.05); padding: 20px;
+      display: flex; flex-direction: column; gap: 15px; position: relative;
     }
-
-    /* Tech Corners */
     .panel::before {
-      content: ""; position: absolute; top: -1px; left: -1px;
-      width: 15px; height: 15px;
-      border-top: 2px solid var(--rl-blue);
-      border-left: 2px solid var(--rl-blue);
+      content:""; position:absolute; top:0; left:0; width:10px; height:10px;
+      border-top:2px solid var(--rl-blue); border-left:2px solid var(--rl-blue);
     }
-    .panel::after {
-      content: ""; position: absolute; bottom: -1px; right: -1px;
-      width: 15px; height: 15px;
-      border-bottom: 2px solid var(--rl-orange);
-      border-right: 2px solid var(--rl-orange);
-    }
-
     .panel-title {
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: var(--rl-blue);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding-bottom: 10px;
-      margin-bottom: 5px;
-      letter-spacing: 1px;
+      font-size: 1.1rem; text-transform: uppercase; color: var(--rl-blue);
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;
     }
 
-    /* --- STANDINGS BOARD --- */
-    .standings-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 4px;
-      font-size: 0.9rem;
-    }
-    
-    .standings-table th {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      font-family: 'Share Tech Mono';
-      text-transform: uppercase;
-      padding-bottom: 8px;
-    }
-    .standings-table th:first-child { text-align: left; }
+    /* STANDINGS */
+    .standings-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .standings-table th { text-align: left; color: var(--text-muted); font-size: 0.75rem; padding: 5px; }
+    .standings-table td { padding: 8px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .q-row { background: linear-gradient(90deg, rgba(0,157,255,0.1), transparent); }
+    .q-row td:first-child { color: var(--rl-blue); font-weight: bold; border-left: 3px solid var(--rl-blue); padding-left: 10px; }
 
-    .standings-row {
-      background: #1e273b;
-      transition: all 0.3s ease;
-    }
-    
-    .standings-row td {
-      padding: 10px 8px;
-      text-align: center;
-      border-top: 1px solid transparent;
-      border-bottom: 1px solid transparent;
-    }
-    .standings-row td:first-child {
-      text-align: left;
-      font-weight: 700;
-      padding-left: 12px;
-      border-left: 3px solid transparent;
-    }
-
-    /* Top 2 Qualification Highlight */
-    .standings-row.qualified {
-      background: linear-gradient(90deg, rgba(0, 157, 255, 0.15), rgba(20, 27, 45, 0));
-    }
-    .standings-row.qualified td:first-child {
-      border-left: 3px solid var(--rl-blue);
-      color: #fff;
-      text-shadow: 0 0 10px var(--rl-blue);
-    }
-
-    .stat-num { font-family: 'Share Tech Mono'; color: #cbd5e1; }
-    .stat-diff { font-weight: bold; }
-    .pos { color: var(--rl-orange); }
-    .neg { color: #f87171; }
-
-    /* --- MATCH LIST --- */
-    .matches-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 12px;
-    }
-
+    /* MATCH CARDS */
+    .matches-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
     .match-card {
-      background: #1b2333;
-      padding: 12px;
-      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+      background: #1b2333; padding: 10px; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
       border-left: 2px solid transparent;
-      transition: transform 0.2s;
     }
+    .match-card.complete { border-left-color: var(--rl-orange); }
     
-    .match-card:hover {
-      transform: translateY(-2px);
-      background: #232d42;
-      border-left: 2px solid var(--rl-orange);
-    }
-
-    .match-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .team-entry {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 8px;
-      border-radius: 4px;
-      margin-bottom: 4px;
-      background: rgba(0,0,0,0.2);
-    }
-
-    .team-entry.winner {
-      background: linear-gradient(90deg, rgba(0, 157, 255, 0.2), transparent);
-      border-left: 2px solid var(--rl-blue);
-    }
-
-    .team-name { font-weight: 600; font-size: 0.9rem; }
+    .match-header { font-size: 0.7rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 5px; }
     
-    /* Series Pips (BO3) */
-    .pip-row { display: flex; gap: 4px; }
-    .pip {
-      width: 8px; height: 8px;
-      background: #334155;
-      transform: skewX(-20deg);
-    }
-    .pip.won { background: var(--rl-blue); box-shadow: 0 0 8px var(--rl-blue); }
+    .team-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+    .team-row.winner .t-name { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+    .t-name { font-weight: 600; font-size: 0.9rem; }
+    
+    /* PIPS */
+    .pips { display: flex; gap: 3px; }
+    .pip { width: 8px; height: 8px; background: #334155; transform: skewX(-20deg); }
+    .pip.won { background: var(--rl-blue); box-shadow: 0 0 5px var(--rl-blue); }
 
-    /* --- GRAND FINAL CARD --- */
-    .finals-card {
+    /* FINALS */
+    .final-box {
       background: linear-gradient(135deg, #1b2333 0%, #0f141f 100%);
-      border: 1px solid var(--rl-orange);
-      padding: 20px;
+      border: 1px solid var(--rl-orange); padding: 20px; text-align: center;
       clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
-      text-align: center;
-      min-height: 300px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      min-height: 300px; display: flex; flex-direction: column; justify-content: center;
     }
-
-    .final-label {
-      color: var(--rl-orange);
-      font-family: 'Share Tech Mono';
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-      font-size: 1.1rem;
-    }
-
-    .final-team {
-      font-size: 1.8rem;
-      font-weight: 800;
-      margin: 10px 0;
-      text-transform: uppercase;
-    }
-
-    .final-team.tbd { color: var(--text-muted); font-size: 1.2rem; font-style: italic; }
-
-    .vs-badge {
-      font-size: 0.8rem;
-      background: #333;
-      color: #aaa;
-      width: 30px; height: 30px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 50%;
-      margin: 10px auto;
-    }
-
-    /* BO5 Pips */
-    .bo5-container {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 15px;
-    }
+    .f-team { font-size: 1.6rem; font-weight: 800; margin: 10px 0; text-transform: uppercase; }
+    .f-team.tbd { color: var(--text-muted); font-size: 1.2rem; font-style: italic; }
     
-    .bo5-row {
-      display: flex;
-      gap: 6px;
-    }
-    
-    .pip-lg {
-      width: 12px; height: 20px;
-      background: #334155;
-      transform: skewX(-20deg);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+    .bo5-pips { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; }
+    .pip-lg { width: 12px; height: 18px; background: #334155; transform: skewX(-20deg); border: 1px solid rgba(255,255,255,0.1); }
     .pip-lg.won { background: var(--rl-orange); box-shadow: 0 0 10px var(--rl-orange); border-color: #fff; }
 
-    .champ-section {
-      margin-top: 20px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 20px;
-    }
-    .champ-name {
-      font-size: 2rem;
-      color: var(--rl-blue);
-      text-shadow: 0 0 20px rgba(0, 157, 255, 0.6);
-      font-weight: 800;
-    }
+    .champ-area { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+    .c-name { font-size: 2rem; font-weight: 800; color: var(--rl-blue); text-shadow: 0 0 20px var(--rl-blue); }
 
-    #confetti-canvas {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
-    }
-
+    #confetti { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
   </style>
 </head>
 <body>
@@ -351,320 +129,301 @@
   <div class="header-block">
     <div>
       <h1>Scholastic Rocket League</h1>
-      <div class="sub-h1">ROUND ROBIN // BO3 GROUP · BO5 FINAL</div>
+      <div class="sub-h1">LIVE DASHBOARD // ROUND ROBIN + FINALS</div>
     </div>
-    <div class="live-pill">
-      <div class="pulse-dot"></div>
-      <span id="sync-status">SYNCING...</span>
+    <div class="status-pill">
+      <div class="pulse"></div> <span id="sync-status">CONNECTING...</span>
     </div>
   </div>
 
-  <div class="dashboard-grid">
+  <div class="grid-layout">
     
     <div class="panel">
-      <div class="panel-title">Standings (Live)</div>
+      <div class="panel-title">Live Standings</div>
       <table class="standings-table">
         <thead>
           <tr>
             <th>Team</th>
-            <th>W-L</th>
-            <th>Diff</th>
+            <th style="text-align:center;">W-L</th>
+            <th style="text-align:center;">GD</th>
           </tr>
         </thead>
         <tbody id="standings-body">
           </tbody>
       </table>
-      <div style="font-size:0.75rem; color:#666; margin-top:auto;">
-        Top 2 teams qualify for Grand Final. <br>Tiebreaker: Match Wins > Goal Diff.
+      <div style="margin-top:auto; font-size:0.7rem; color:var(--text-muted);">
+        * Top 2 advance to Grand Final.<br>
+        * Tiebreakers: Match Wins > Goal Diff.
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">Group Stage (Best of 3)</div>
-      <div class="matches-container" id="group-matches">
+      <div class="panel-title">Group Stage (BO3)</div>
+      <div class="matches-grid" id="matches-container">
         </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">Grand Final (Best of 5)</div>
-      
-      <div class="finals-card">
-        <div class="final-label">CHAMPIONSHIP MATCH</div>
+      <div class="panel-title">Championship (BO5)</div>
+      <div class="final-box">
+        <div style="color:var(--rl-orange); font-family:'Share Tech Mono'; font-size:0.9rem; letter-spacing:2px;">GRAND FINAL</div>
         
-        <div class="final-team tbd" id="final-t1">Top Seed</div>
-        <div class="bo5-container">
-           <div class="bo5-row" id="final-pips-t1">
-             <div class="pip-lg"></div><div class="pip-lg"></div><div class="pip-lg"></div>
-           </div>
+        <div class="f-team tbd" id="final-t1-name">TBD</div>
+        <div class="bo5-pips" id="final-t1-pips">
+          <div class="pip-lg"></div><div class="pip-lg"></div><div class="pip-lg"></div>
         </div>
 
-        <div class="vs-badge">VS</div>
+        <div style="font-size:0.8rem; color:#555; margin: 5px 0;">VS</div>
 
-        <div class="final-team tbd" id="final-t2">2nd Seed</div>
-        <div class="bo5-container">
-           <div class="bo5-row" id="final-pips-t2">
-             <div class="pip-lg"></div><div class="pip-lg"></div><div class="pip-lg"></div>
-           </div>
+        <div class="f-team tbd" id="final-t2-name">TBD</div>
+        <div class="bo5-pips" id="final-t2-pips">
+          <div class="pip-lg"></div><div class="pip-lg"></div><div class="pip-lg"></div>
         </div>
 
-        <div class="champ-section">
-          <canvas id="confetti-canvas"></canvas>
-          <div style="font-size:0.8rem; color:#888; letter-spacing:2px;">WINNER</div>
-          <div class="champ-name" id="champion-name">TBD</div>
+        <div class="champ-area">
+          <canvas id="confetti"></canvas>
+          <div style="font-size:0.7rem; color:#888; letter-spacing:2px; margin-bottom:5px;">CHAMPION</div>
+          <div class="c-name" id="champion-name">TBD</div>
         </div>
       </div>
     </div>
 
   </div>
 
-  <script>
-    // --- CONFIG ---
-    // Use the backend URL provided in previous context
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxWWnjyvwawcKKf0wtVya6M8GQHdGM9gcgz48C6T0CzoZ8gFxbXyaSAt0vdx9fhv_G4IQ/exec';
+<script>
+  // --- CONFIGURATION ---
+  // Your exact Google Script URL
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxWWnjyvwawcKKf0wtVya6M8GQHdGM9gcgz48C6T0CzoZ8gFxbXyaSAt0vdx9fhv_G4IQ/exec';
+
+  // Team Definitions
+  const teams = [
+    { id: "T1", name: "Cassopolis" },
+    { id: "T2", name: "Otsego" },
+    { id: "T3", name: "Marcellus HS" },
+    { id: "T4", name: "MI Lutheran" }
+  ];
+
+  // Match Schedule (IDs must match what you send from Backend)
+  const schedule = [
+    { id: "G1", t1: "T1", t2: "T2" },
+    { id: "G2", t1: "T3", t2: "T4" },
+    { id: "G3", t1: "T1", t2: "T3" },
+    { id: "G4", t1: "T2", t2: "T4" },
+    { id: "G5", t1: "T1", t2: "T4" },
+    { id: "G6", t1: "T2", t2: "T3" }
+  ];
+
+  let prevChampion = "";
+
+  // --- CORE LOGIC: Process Raw Data ---
+  function processData(serverData) {
+    const matches = serverData.matches || {};
+    const teamStats = {};
     
-    const teams = [
-      { id: "T1", name: "Cassopolis" },
-      { id: "T2", name: "Otsego" },
-      { id: "T3", name: "Marcellus HS" },
-      { id: "T4", name: "MI Lutheran" }
-    ];
+    // Initialize Stats
+    teams.forEach(t => {
+      teamStats[t.id] = { ...t, wins: 0, losses: 0, gf: 0, ga: 0, gd: 0 };
+    });
 
-    const groupMatchesDef = [
-      { id: "G1", t1: "T1", t2: "T2" },
-      { id: "G2", t1: "T3", t2: "T4" },
-      { id: "G3", t1: "T1", t2: "T3" },
-      { id: "G4", t1: "T2", t2: "T4" },
-      { id: "G5", t1: "T1", t2: "T4" },
-      { id: "G6", t1: "T2", t2: "T3" }
-    ];
+    const processedMatches = [];
 
-    let prevChampion = "";
-
-    // --- LOGIC: Compute Winner from Game Scores ---
-    // Rocket League API returns Game 1 Score, Game 2 Score...
-    // We must calc who won the SERIES (BO3)
-    function calculateSeries(matchData, isBo5 = false) {
-      let wins1 = 0;
-      let wins2 = 0;
-      let gamesPlayed = 0;
-      let goalDiff1 = 0;
+    // 1. Process Group Stage
+    schedule.forEach((m, index) => {
+      const mData = matches[m.id] || {}; // Expecting object with Game Scores inside
       
-      const maxGames = isBo5 ? 5 : 3;
+      // Calculate Series Winner based on Game Scores (BO3)
+      // We look for keys like "Game 1 T1", "Game 1 T2" OR generic index
+      // To be safe, we check multiple formats or iterate 1-3
+      let sWins1 = 0;
+      let sWins2 = 0;
+      let sPlayed = 0;
 
-      for (let i = 1; i <= maxGames; i++) {
-        // Data keys are roughly "matchId-game-team" based on how typical AppScript saves
-        // But the previous API usually returns a structured object.
-        // Assuming we get something like matches['G1'] = { game1_t1: 2, game1_t2: 1 ... }
-        // Let's adapt based on the JSON structure the user typically has. 
-        // We will assume the API returns an object where we can check games.
+      for(let g=1; g<=3; g++) {
+        // Try to find the score in the raw data. 
+        // Common ID patterns: "g1t1", "G1_1_1", etc. 
+        // We will rely on the standard structure: matches[MatchID].games[0].t1
+        // OR flat keys matches[MatchID].g1t1
         
-        // Actually, looking at previous prompt's logic, we need to handle the data object.
-        // Let's assume the API returns: { G1: { t1: "A", t2: "B", scores: [ {g1t1: 2, g1t2: 1}, ... ] } }
-        // Or simpler: { G1: { g1t1: 2, g1t2: 1, g2t1: 0, g2t2: 3 ... } }
-        
-        const s1 = parseInt(matchData[`g${i}t1`]);
-        const s2 = parseInt(matchData[`g${i}t2`]);
+        const score1 = parseInt(mData[`game${g}_t1`] || mData[`g${g}t1`] || -1);
+        const score2 = parseInt(mData[`game${g}_t2`] || mData[`g${g}t2`] || -1);
 
-        if (!isNaN(s1) && !isNaN(s2)) {
-          gamesPlayed++;
-          goalDiff1 += (s1 - s2);
-          if (s1 > s2) wins1++;
-          if (s2 > s1) wins2++;
-        }
-      }
-
-      return {
-        wins1, wins2, goalDiff1,
-        winner: wins1 > wins2 ? 1 : (wins2 > wins1 ? 2 : 0)
-      };
-    }
-
-    // --- RENDER FUNCTIONS ---
-
-    function getPips(wins, max) {
-      let html = '<div class="pip-row">';
-      for(let i=0; i<max; i++) {
-        html += `<div class="pip ${i < wins ? 'won' : ''}"></div>`;
-      }
-      html += '</div>';
-      return html;
-    }
-
-    async function updateDashboard() {
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        const matchesData = data.matches || {}; // Assuming flat map of MatchID -> ScoreData
-
-        // 1. Process Group Stage & Standings
-        const teamStats = {};
-        teams.forEach(t => teamStats[t.id] = { ...t, wins:0, losses:0, gd:0 });
-
-        const groupContainer = document.getElementById('group-matches');
-        groupContainer.innerHTML = '';
-
-        groupMatchesDef.forEach((m, idx) => {
-          // Get calculated result
-          const mData = matchesData[m.id] || {};
-          const result = calculateSeries(mData, false); // BO3
-
-          // Update Stats
-          const seriesComplete = (result.wins1 >= 2 || result.wins2 >= 2);
-          if(seriesComplete) {
-            if(result.wins1 > result.wins2) {
-              teamStats[m.t1].wins++;
-              teamStats[m.t2].losses++;
-            } else {
-              teamStats[m.t2].wins++;
-              teamStats[m.t1].losses++;
-            }
-            teamStats[m.t1].gd += result.goalDiff1;
-            teamStats[m.t2].gd -= result.goalDiff1;
-          }
-
-          // Render Card
-          const t1 = teams.find(t=>t.id===m.t1).name;
-          const t2 = teams.find(t=>t.id===m.t2).name;
-
-          const card = document.createElement('div');
-          card.className = 'match-card';
-          card.innerHTML = `
-            <div class="match-meta">Match ${idx+1} (BO3)</div>
-            <div class="team-entry ${result.wins1 > result.wins2 && seriesComplete ? 'winner' : ''}">
-              <span class="team-name">${t1}</span>
-              ${getPips(result.wins1, 2)}
-            </div>
-            <div class="team-entry ${result.wins2 > result.wins1 && seriesComplete ? 'winner' : ''}">
-              <span class="team-name">${t2}</span>
-              ${getPips(result.wins2, 2)}
-            </div>
-          `;
-          groupContainer.appendChild(card);
-        });
-
-        // 2. Render Standings
-        const sortedTeams = Object.values(teamStats).sort((a,b) => {
-          if(b.wins !== a.wins) return b.wins - a.wins;
-          return b.gd - a.gd; // GD tiebreaker
-        });
-
-        const standingsBody = document.getElementById('standings-body');
-        standingsBody.innerHTML = '';
-        sortedTeams.forEach((t, idx) => {
-          const isQualified = idx < 2;
-          const diffClass = t.gd > 0 ? 'pos' : (t.gd < 0 ? 'neg' : '');
-          const diffPrefix = t.gd > 0 ? '+' : '';
+        if(score1 >= 0 && score2 >= 0) {
+          sPlayed++;
+          // Update Goal Diff immediately
+          teamStats[m.t1].gf += score1;
+          teamStats[m.t1].ga += score2;
+          teamStats[m.t2].gf += score2;
+          teamStats[m.t2].ga += score1;
           
-          const row = `
-            <tr class="standings-row ${isQualified ? 'qualified' : ''}">
-              <td>${t.name} ${isQualified ? '<span style="font-size:0.7em; color:var(--rl-blue);">[Q]</span>' : ''}</td>
-              <td class="stat-num">${t.wins} - ${t.losses}</td>
-              <td class="stat-num stat-diff ${diffClass}">${diffPrefix}${t.gd}</td>
-            </tr>
-          `;
-          standingsBody.innerHTML += row;
-        });
-
-        // 3. Render Grand Final
-        const finalsData = matchesData['FINAL'] || {}; // Assuming backend uses 'FINAL' or we map inputs to it
-        // We actually need to map the games 1-5 inputs to this. 
-        // Let's assume the user enters data for "M_FINAL" or similar in backend.
-        // For now, let's use the sortedTeams to populate Names if match hasn't started,
-        // or check if specific final ID exists.
-        
-        // Populate Top 2 Names
-        const finalT1 = document.getElementById('final-t1');
-        const finalT2 = document.getElementById('final-t2');
-        
-        if(sortedTeams[0].wins + sortedTeams[0].losses > 0) {
-          finalT1.innerText = sortedTeams[0].name;
-          finalT1.classList.remove('tbd');
-          finalT2.innerText = sortedTeams[1].name;
-          finalT2.classList.remove('tbd');
+          if(score1 > score2) sWins1++;
+          if(score2 > score1) sWins2++;
         }
+      }
 
-        // Logic for Final BO5 Score
-        // We look for finals data. In the previous provided code, it used data attributes.
-        // We will assume matchesData contains keys 'F_g1t1', 'F_g1t2' etc.
-        let fWins1 = 0; 
-        let fWins2 = 0;
-        
-        // Check 5 games
-        for(let i=1; i<=5; i++) {
-           let s1 = parseInt(matchesData[`final_g${i}t1`]); // Adjusted to hypothetical key
-           let s2 = parseInt(matchesData[`final_g${i}t2`]);
-           if(!isNaN(s1) && !isNaN(s2)) {
-             if(s1 > s2) fWins1++;
-             if(s2 > s1) fWins2++;
-           }
-        }
+      // Did someone win the series?
+      const isFinished = (sWins1 >= 2 || sWins2 >= 2);
+      if(isFinished) {
+        if(sWins1 > sWins2) { teamStats[m.t1].wins++; teamStats[m.t2].losses++; }
+        else { teamStats[m.t2].wins++; teamStats[m.t1].losses++; }
+      }
 
-        // Update Pips BO5
-        const pipsT1 = document.getElementById('final-pips-t1').children;
-        const pipsT2 = document.getElementById('final-pips-t2').children;
-        
-        // Fill 3 slots (first to 3)
-        for(let i=0; i<3; i++) {
-          pipsT1[i].className = `pip-lg ${i < fWins1 ? 'won' : ''}`;
-          pipsT2[i].className = `pip-lg ${i < fWins2 ? 'won' : ''}`;
-        }
+      processedMatches.push({
+        id: m.id,
+        t1: m.t1, t2: m.t2,
+        w1: sWins1, w2: sWins2,
+        finished: isFinished
+      });
+    });
 
-        // Champion Check
-        const champEl = document.getElementById('champion-name');
-        let currentChamp = "TBD";
-        if(fWins1 >= 3) currentChamp = sortedTeams[0].name;
-        if(fWins2 >= 3) currentChamp = sortedTeams[1].name;
+    // 2. Calculate Standings (Wins > GD)
+    Object.keys(teamStats).forEach(id => {
+      teamStats[id].gd = teamStats[id].gf - teamStats[id].ga;
+    });
 
-        champEl.innerText = currentChamp;
-        
-        if(currentChamp !== "TBD" && currentChamp !== prevChampion) {
-          prevChampion = currentChamp;
-          startConfetti();
-        }
+    const standings = Object.values(teamStats).sort((a, b) => {
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      return b.gd - a.gd;
+    });
 
-        document.getElementById('sync-status').innerText = "LIVE";
-        document.getElementById('sync-status').style.color = "var(--rl-blue)";
-
-      } catch (e) {
-        console.log("Polling...", e);
+    // 3. Process Grand Final (Top 2)
+    // Look for "FINAL" or "M7" or similar key in data
+    const finalData = matches["FINAL"] || matches["M7"] || matches["GF"] || {};
+    let fWins1 = 0; 
+    let fWins2 = 0;
+    
+    // Check 5 games for final
+    for(let g=1; g<=5; g++) {
+      const s1 = parseInt(finalData[`game${g}_t1`] || finalData[`g${g}t1`] || -1);
+      const s2 = parseInt(finalData[`game${g}_t2`] || finalData[`g${g}t2`] || -1);
+      if(s1 >= 0 && s2 >= 0) {
+        if(s1 > s2) fWins1++;
+        if(s2 > s1) fWins2++;
       }
     }
 
-    // --- CONFETTI FX ---
-    function startConfetti() {
-      const canvas = document.getElementById('confetti-canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = canvas.parentElement.offsetWidth;
-      canvas.height = canvas.parentElement.offsetHeight;
+    return { processedMatches, standings, final: { w1: fWins1, w2: fWins2 } };
+  }
+
+  // --- RENDER UI ---
+  function render(data) {
+    // Standings
+    const sBody = document.getElementById('standings-body');
+    sBody.innerHTML = "";
+    data.standings.forEach((t, i) => {
+      const isQ = i < 2; // Top 2 Qualify
+      const gdSign = t.gd > 0 ? "+" : "";
+      sBody.innerHTML += `
+        <tr class="${isQ ? 'q-row' : ''}">
+          <td>${t.name} ${isQ ? '<span style="font-size:0.7em;">[Q]</span>' : ''}</td>
+          <td style="text-align:center; font-family:'Share Tech Mono';">${t.wins}-${t.losses}</td>
+          <td style="text-align:center; font-family:'Share Tech Mono'; color:${t.gd>=0 ? '#4ade80':'#f87171'}">${gdSign}${t.gd}</td>
+        </tr>
+      `;
+    });
+
+    // Group Matches
+    const mContainer = document.getElementById('matches-container');
+    mContainer.innerHTML = "";
+    data.processedMatches.forEach((m, i) => {
+      const t1Name = teams.find(t=>t.id===m.t1).name;
+      const t2Name = teams.find(t=>t.id===m.t2).name;
       
-      let particles = [];
-      for(let i=0; i<60; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height - canvas.height,
-          speed: Math.random() * 4 + 2,
-          color: Math.random() > 0.5 ? '#009dff' : '#ff8d00',
-          size: Math.random() * 5 + 2
-        });
-      }
+      // Generate Pips
+      const getPipHtml = (wins) => {
+        let h = '<div class="pips">';
+        for(let k=0;k<2;k++) h+= `<div class="pip ${k<wins?'won':''}"></div>`;
+        h+='</div>'; return h;
+      };
 
-      function animate() {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        particles.forEach(p => {
-          p.y += p.speed;
-          if(p.y > canvas.height) p.y = -10;
-          ctx.fillStyle = p.color;
-          ctx.fillRect(p.x, p.y, p.size, p.size);
-        });
-        requestAnimationFrame(animate);
-      }
-      animate();
+      mContainer.innerHTML += `
+        <div class="match-card ${m.finished ? 'complete' : ''}">
+          <div class="match-header"><span>MATCH ${i+1}</span><span>${m.finished ? 'FINAL' : 'LIVE'}</span></div>
+          <div class="team-row ${m.w1 > m.w2 && m.finished ? 'winner' : ''}">
+            <span class="t-name">${t1Name}</span> ${getPipHtml(m.w1)}
+          </div>
+          <div class="team-row ${m.w2 > m.w1 && m.finished ? 'winner' : ''}">
+            <span class="t-name">${t2Name}</span> ${getPipHtml(m.w2)}
+          </div>
+        </div>
+      `;
+    });
+
+    // Grand Final
+    const ft1 = document.getElementById('final-t1-name');
+    const ft2 = document.getElementById('final-t2-name');
+    const fp1 = document.getElementById('final-t1-pips').children;
+    const fp2 = document.getElementById('final-t2-pips').children;
+    const champEl = document.getElementById('champion-name');
+
+    // Set Names
+    if(data.standings[0].wins > 0 || data.standings[0].losses > 0) {
+      ft1.innerText = data.standings[0].name; ft1.classList.remove('tbd');
+      ft2.innerText = data.standings[1].name; ft2.classList.remove('tbd');
     }
 
-    // Init
-    updateDashboard();
-    setInterval(updateDashboard, 5000); // Poll every 5s
+    // Set Pips (First to 3)
+    const maxWin = 3;
+    for(let i=0; i<3; i++) {
+      fp1[i].className = `pip-lg ${i < data.final.w1 ? 'won' : ''}`;
+      fp2[i].className = `pip-lg ${i < data.final.w2 ? 'won' : ''}`;
+    }
 
-  </script>
+    // Champion Logic
+    let currentChamp = "TBD";
+    if(data.final.w1 >= 3) currentChamp = data.standings[0].name;
+    if(data.final.w2 >= 3) currentChamp = data.standings[1].name;
+    
+    champEl.innerText = currentChamp;
+    if(currentChamp !== "TBD" && currentChamp !== prevChampion) {
+      prevChampion = currentChamp;
+      triggerConfetti();
+    }
+  }
+
+  // --- FETCH LOOP ---
+  async function tick() {
+    try {
+      const status = document.getElementById('sync-status');
+      status.innerText = "SYNCING...";
+      status.style.color = "var(--rl-orange)";
+
+      const res = await fetch(API_URL);
+      const json = await res.json();
+      
+      // Debug: Uncomment this to see exact data structure in Console
+      // console.log("Backend Data:", json);
+
+      const processed = processData(json);
+      render(processed);
+
+      status.innerText = "LIVE";
+      status.style.color = "var(--rl-blue)";
+    } catch (e) {
+      console.error(e);
+      document.getElementById('sync-status').innerText = "ERROR";
+    }
+  }
+
+  // Confetti FX
+  function triggerConfetti() {
+    const cvs = document.getElementById('confetti');
+    const ctx = cvs.getContext('2d');
+    cvs.width = cvs.parentElement.offsetWidth;
+    cvs.height = cvs.parentElement.offsetHeight;
+    let p = [];
+    for(let i=0; i<60; i++) p.push({x:Math.random()*cvs.width, y:Math.random()*cvs.height-cvs.height, c:Math.random()>.5?'#009dff':'#ff8d00', s:Math.random()*5+2, v:Math.random()*3+2});
+    function anim(){
+      ctx.clearRect(0,0,cvs.width,cvs.height);
+      p.forEach(pt=>{ pt.y+=pt.v; if(pt.y>cvs.height)pt.y=-10; ctx.fillStyle=pt.c; ctx.fillRect(pt.x,pt.y,pt.s,pt.s); });
+      requestAnimationFrame(anim);
+    }
+    anim();
+  }
+
+  // Start
+  tick();
+  setInterval(tick, 5000);
+
+</script>
 </body>
 </html>
