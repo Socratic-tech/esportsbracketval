@@ -2,1127 +2,591 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Scholastic Valorant – Double Elimination Bracket</title>
+  <title>Scholastic Valorant – Tactical Bracket</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg: #020617;
-      --panel: #020617;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.24);
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --border: #1f2937;
-      --success: #22c55e;
-      --danger: #f97373;
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.75);
-      --radius-lg: 18px;
+      --bg-dark: #0f1923; /* Valorant Dark Blue */
+      --panel: #1f2731;
+      --valo-red: #ff4655;
+      --valo-white: #ece8e1;
+      --accent-cyan: #38bdf8;
+      --text-muted: #8b9bb4;
+      --border: rgba(236, 232, 225, 0.1);
+      --shadow-hard: 0 4px 0 rgba(0,0,0,0.4);
     }
 
     * { box-sizing: border-box; }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes shimmer {
-      0% {
-        background-position: -200% center;
-      }
-      100% {
-        background-position: 200% center;
-      }
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.6;
-      }
-    }
-
-    @keyframes glow {
-      0%, 100% {
-        box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), 0 0 40px rgba(56, 189, 248, 0.1);
-      }
-      50% {
-        box-shadow: 0 0 30px rgba(56, 189, 248, 0.5), 0 0 60px rgba(56, 189, 248, 0.2);
-      }
-    }
-
-    @keyframes pop {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    @keyframes popBig {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.08);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    .pop-animation {
-      animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .pop-big-animation {
-      animation: popBig 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, Helvetica, Arial, sans-serif;
-      background: #020617;
-      background-image: 
-        radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 90%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
-        linear-gradient(180deg, #0a0f1e 0%, #020617 100%);
-      color: var(--text);
-      padding: 24px;
+      font-family: 'Rajdhani', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--valo-white);
+      overflow-x: hidden;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* --- TACTICAL BACKGROUND GRID --- */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; width: 200%; height: 200%;
+      background-image: 
+        linear-gradient(rgba(255, 70, 85, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 70, 85, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
+      animation: gridMove 60s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-40px, -40px); }
+    }
+
+    /* --- HEADER --- */
+    .header-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
     }
 
     h1 {
+      font-family: 'Tungsten', 'Rajdhani', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 2.2rem;
       margin: 0;
-      font-size: 1.6rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #f9fafb;
-      text-shadow: 0 2px 20px rgba(56, 189, 248, 0.4);
-      background: linear-gradient(135deg, #f9fafb 0%, #bae6fd 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      letter-spacing: 2px;
+      line-height: 1;
+      color: var(--valo-white);
+      text-shadow: 2px 2px 0px rgba(255, 70, 85, 0.2);
     }
 
-    .subheading {
+    .sub-h1 {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--valo-red);
       font-size: 0.9rem;
-      color: var(--muted);
-      max-width: 960px;
-      line-height: 1.5;
-    }
-
-    .shell {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%);
-      border-radius: 24px;
-      padding: 18px 20px;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .shell::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.8), transparent);
-      animation: shimmer 3s infinite;
-    }
-
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      font-size: 0.8rem;
-    }
-
-    .tag {
-      border-radius: 999px;
-      padding: 6px 12px;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(15, 23, 42, 0.8));
-      color: var(--muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .tag:hover {
-      transform: translateY(-2px);
-      border-color: rgba(56, 189, 248, 0.5);
-      box-shadow: 0 6px 16px rgba(56, 189, 248, 0.2);
-    }
-
-    .tag strong {
-      color: #e5e7eb;
-      font-weight: 600;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-      gap: 18px;
-    }
-
-    @media (max-width: 900px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-      body { padding: 16px; }
-      h1 { font-size: 1.3rem; }
-      .shell { padding: 16px 14px; }
-    }
-
-    .panel {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(2, 6, 23, 0.9) 100%);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      padding: 16px 14px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(56, 189, 248, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .panel::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 60%);
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .panel::after {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.03) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .panel:hover {
-      border-color: rgba(56, 189, 248, 0.5);
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        0 0 40px rgba(56, 189, 248, 0.1),
-        inset 0 1px 0 rgba(56, 189, 248, 0.15);
-    }
-
-    .panel-header {
-      position: relative;
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      z-index: 1;
-    }
-
-    .panel-title {
-      font-size: 0.95rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: #bae6fd;
-      text-shadow: 0 2px 10px rgba(56, 189, 248, 0.5);
-      font-weight: 600;
-    }
-
-    .panel-sub {
-      font-size: 0.75rem;
-      color: var(--muted);
-      max-width: 420px;
-      line-height: 1.4;
       margin-top: 4px;
+      letter-spacing: 1px;
     }
 
-    .column-group {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      z-index: 1;
-    }
-
-    .column-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-
-    .match-card {
-      position: relative;
-      z-index: 1;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      padding: 10px 10px 12px;
-      margin-bottom: 10px;
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Share Tech Mono', monospace;
       font-size: 0.8rem;
-      box-shadow: 
-        0 10px 25px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(148, 163, 184, 0.1);
-      transition: all 0.3s ease;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 6px 12px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    }
+    
+    .pulse-dot {
+      width: 8px; height: 8px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      animation: pulseRed 2s infinite;
+    }
+
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(56, 189, 248, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+    }
+
+    /* --- LAYOUT --- */
+    .bracket-container {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      .bracket-container { grid-template-columns: 1fr; }
+    }
+
+    .panel-section {
+      background: rgba(15, 25, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Decorative corners */
+    .panel-section::before {
+      content: ""; position: absolute; top: -1px; left: -1px;
+      width: 10px; height: 10px;
+      border-top: 2px solid var(--valo-red);
+      border-left: 2px solid var(--valo-red);
+    }
+    .panel-section::after {
+      content: ""; position: absolute; bottom: -1px; right: -1px;
+      width: 10px; height: 10px;
+      border-bottom: 2px solid var(--valo-red);
+      border-right: 2px solid var(--valo-red);
+    }
+
+    .column-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    /* --- MATCH CARDS (THE VALORANT LOOK) --- */
+    .match-card {
+      background: #272d38;
+      margin-bottom: 12px;
+      padding: 0;
+      position: relative;
       cursor: pointer;
-      animation: fadeIn 0.5s ease-out backwards;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      /* The Tech Cut */
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%); 
+      border-left: 3px solid transparent;
     }
 
     .match-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.6),
-        0 0 30px rgba(56, 189, 248, 0.15),
-        inset 0 1px 0 rgba(148, 163, 184, 0.15);
+      transform: translateX(4px);
+      filter: brightness(1.2);
+      border-left: 3px solid var(--valo-red);
     }
 
-    .match-card:nth-child(2) { animation-delay: 0.1s; }
-    .match-card:nth-child(3) { animation-delay: 0.2s; }
-    .match-card:nth-child(4) { animation-delay: 0.3s; }
-
-    .match-id {
-      font-size: 0.68rem;
+    .match-meta {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: rgba(0,0,0,0.3);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'Share Tech Mono', monospace;
       text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--muted);
-      margin-bottom: 3px;
-      font-weight: 600;
-    }
-
-    .match-label {
-      font-size: 0.8rem;
-      color: #e5e7eb;
-      margin-bottom: 6px;
-      font-weight: 500;
     }
 
     .team-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 3px 0;
-      padding: 2px 0;
-      transition: all 0.2s ease;
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      height: 40px;
     }
-
-    .team-row:hover {
-      background: rgba(56, 189, 248, 0.05);
-      border-radius: 6px;
-      padding: 2px 4px;
-    }
+    .team-row:last-child { border-bottom: none; }
 
     .team-name {
-      font-size: 0.78rem;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 72%;
-      font-weight: 500;
+      max-width: 75%;
     }
+    .team-name.tbd { color: var(--text-muted); font-style: italic; font-weight: 400; }
 
-    .team-name.tbd {
-      color: var(--muted);
-      font-style: italic;
-      font-weight: 400;
-    }
-
-    .score-pill {
-      min-width: 34px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      text-align: center;
-      font-size: 0.75rem;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.9));
-      color: var(--muted);
-      transition: all 0.3s ease;
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .score-pill.winner {
-      border-color: rgba(34, 197, 94, 0.8);
-      color: #bbf7d0;
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(15, 23, 42, 0.98));
-      box-shadow: 
-        0 4px 12px rgba(34, 197, 94, 0.3),
-        inset 0 1px 0 rgba(34, 197, 94, 0.3);
-      animation: glow 2s ease-in-out infinite;
-    }
-
-    .score-pill.loser {
-      border-color: rgba(239, 68, 68, 0.6);
-      color: #fecaca;
-      opacity: 0.7;
-    }
-
-    .note {
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-top: 6px;
-      line-height: 1.4;
-      padding: 6px 8px;
-      background: rgba(15, 23, 42, 0.5);
-      border-radius: 8px;
-      border-left: 2px solid rgba(56, 189, 248, 0.3);
-    }
-
-    .teams-list {
-      position: relative;
-      z-index: 1;
-      margin: 0;
-      padding-left: 20px;
-      font-size: 0.8rem;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    .teams-list li {
-      margin-bottom: 4px;
-      transition: all 0.2s ease;
-      padding-left: 4px;
-    }
-
-    .teams-list li:hover {
-      color: #e5e7eb;
-      padding-left: 8px;
-    }
-
-    .finals-block {
-      position: relative;
-      z-index: 1;
+    /* Map Pips Logic */
+    .score-container {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      gap: 3px;
     }
 
-    .finals-group-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-
-    .champion-banner {
-      margin-top: 10px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(15, 23, 42, 0.98) 100%);
-      border: 2px solid rgba(34, 197, 94, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 0.85rem;
-      box-shadow: 
-        0 10px 30px rgba(34, 197, 94, 0.2),
-        inset 0 1px 0 rgba(34, 197, 94, 0.3);
-      transition: all 0.3s ease;
-      animation: fadeIn 0.6s ease-out, glow 3s ease-in-out infinite;
-    }
-
-    .champion-banner:hover {
-      transform: scale(1.02);
-      box-shadow: 
-        0 15px 40px rgba(34, 197, 94, 0.3),
-        inset 0 1px 0 rgba(34, 197, 94, 0.4);
-    }
-
-    .champion-title {
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      color: #bbf7d0;
-      text-shadow: 0 2px 10px rgba(34, 197, 94, 0.5);
-    }
-
-    .champion-name { 
-      font-size: 0.95rem; 
-      font-weight: 600;
-      color: #f0fdf4;
+    .map-pip {
+      width: 10px;
+      height: 10px;
+      background: #3f4652;
+      transform: skewX(-15deg);
     }
     
-    .champion-sub { 
-      font-size: 0.75rem; 
-      color: #a7f3d0; 
-      line-height: 1.4;
+    .map-pip.filled {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+    }
+    
+    .map-pip.filled.winner {
+      background: var(--valo-red);
+      box-shadow: 0 0 8px rgba(255, 70, 85, 0.6);
     }
 
-    .status-pill {
-      font-size: 0.72rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.95));
-      color: var(--muted);
-      transition: all 0.3s ease;
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    /* Winner Highlighting within card */
+    .team-row.is-winner .team-name { color: var(--valo-white); text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+    .team-row.is-loser .team-name { color: var(--text-muted); opacity: 0.6; }
+
+    /* --- SIDE PANEL --- */
+    .grand-final-card {
+      transform: scale(1.05);
+      border: 1px solid var(--valo-red);
+      background: linear-gradient(135deg, #272d38 0%, #3a2225 100%);
     }
 
-    .status-pill.live {
-      border-color: rgba(34, 197, 94, 0.8);
-      color: #bbf7d0;
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(15, 23, 42, 0.95));
-      animation: pulse 2s ease-in-out infinite;
-      box-shadow: 
-        0 4px 12px rgba(34, 197, 94, 0.3),
-        inset 0 1px 0 rgba(34, 197, 94, 0.3);
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.95);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    @keyframes blowUp {
-      from {
-        transform: scale(0.8);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .match-card-enlarged {
-      position: relative;
-      z-index: 1001;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(2, 6, 23, 1) 100%);
-      border-radius: 20px;
-      border: 2px solid rgba(56, 189, 248, 0.6);
-      padding: 32px;
-      max-width: 600px;
-      width: 100%;
-      font-size: 1rem;
-      box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.8),
-        0 0 80px rgba(56, 189, 248, 0.3),
-        inset 0 2px 0 rgba(56, 189, 248, 0.2);
-      animation: blowUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .match-card-enlarged::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.15), transparent 70%);
-      border-radius: 20px;
-      pointer-events: none;
-    }
-
-    .match-card-enlarged .match-id {
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-      color: #bae6fd;
-    }
-
-    .match-card-enlarged .match-label {
-      font-size: 1.2rem;
-      margin-bottom: 24px;
-      color: #f9fafb;
-      font-weight: 600;
-    }
-
-    .match-card-enlarged .team-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 12px 0;
-      padding: 12px 16px;
-      background: rgba(15, 23, 42, 0.6);
-      border-radius: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      transition: all 0.2s ease;
-    }
-
-    .match-card-enlarged .team-row:hover {
-      background: rgba(56, 189, 248, 0.08);
-      border-color: rgba(56, 189, 248, 0.4);
-    }
-
-    .match-card-enlarged .team-name {
-      font-size: 1.1rem;
-      max-width: 75%;
-      font-weight: 600;
-    }
-
-    .match-card-enlarged .team-name.tbd {
-      font-size: 1rem;
-      font-weight: 400;
-    }
-
-    .match-card-enlarged .score-pill {
-      min-width: 50px;
-      padding: 8px 16px;
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .close-modal {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.5);
-      color: #fecaca;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.5rem;
-      line-height: 1;
-      transition: all 0.2s ease;
-      z-index: 1002;
-    }
-
-    .close-modal:hover {
-      background: rgba(239, 68, 68, 0.4);
-      border-color: rgba(239, 68, 68, 0.8);
-      transform: rotate(90deg);
-    }
-
-    .modal-hint {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.75rem;
-      color: var(--muted);
+    .champion-box {
+      margin-top: 20px;
+      background: linear-gradient(135deg, rgba(255, 70, 85, 0.1) 0%, rgba(15, 25, 35, 0.9) 100%);
+      border: 1px solid var(--valo-red);
+      padding: 24px;
       text-align: center;
-      opacity: 0.7;
+      clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+      position: relative;
+      overflow: hidden;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
+
+    .champion-label {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--valo-red);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .champion-name {
+      font-size: 2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1;
+      text-shadow: 0 4px 20px rgba(255, 70, 85, 0.5);
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Modal Styling Updates */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(15, 25, 35, 0.95);
+      backdrop-filter: blur(5px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease-out; }
+    
+    .match-card-enlarged {
+      background: #1b222b;
+      width: 90%; max-width: 500px;
+      border: 1px solid var(--valo-red);
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+      padding: 30px;
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    }
+    
+    .match-card-enlarged .score-number {
+      font-size: 2rem; font-weight: 700;
+      font-family: 'Share Tech Mono';
+    }
+
+    .teams-list ul {
+      list-style: none; padding: 0; margin: 0;
+      font-size: 0.9rem; color: var(--text-muted);
+    }
+    .teams-list li {
+      padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; gap: 10px;
+    }
+    .teams-list span { color: var(--valo-red); font-weight: bold; width: 20px;}
+
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
   </style>
 </head>
 <body>
-  <div class="shell">
-    <div class="toolbar">
-      <div>
-        <h1>Scholastic Valorant – Double Elimination Bracket</h1>
-        <div class="subheading">
-          Live-view bracket for a six-team Valorant double-elimination event (11 total matches).
-          Scores and match labels are driven by the admin control panel and update automatically.
+
+  <div class="bg-grid"></div>
+
+  <div class="header-block">
+    <div>
+      <h1>Scholastic Valorant</h1>
+      <div class="sub-h1">DOUBLE ELIMINATION // CHAMPIONSHIP SERIES</div>
+    </div>
+    <div class="live-indicator">
+      <div class="pulse-dot"></div>
+      <span id="sync-status">CONNECTING...</span>
+    </div>
+  </div>
+
+  <div class="bracket-container">
+    
+    <div class="panel-section">
+      
+      <div class="section-title">Upper Bracket</div>
+      <div class="column-layout">
+        <div>
+          <div style="font-size:0.75rem; color:#555; margin-bottom:5px;">ROUND 1</div>
+          <div id="match-M1" class="match-card"></div>
+          <div id="match-M2" class="match-card"></div>
+        </div>
+        <div>
+          <div style="font-size:0.75rem; color:#555; margin-bottom:5px;">SEMIFINALS</div>
+          <div id="match-M3" class="match-card"></div>
+          <div id="match-M4" class="match-card"></div>
+        </div>
+        <div>
+          <div style="font-size:0.75rem; color:#555; margin-bottom:5px;">UPPER FINAL</div>
+          <div id="match-M5" class="match-card"></div>
         </div>
       </div>
-      <div>
-        <div class="tag-row">
-          <div class="tag"><strong>Teams:</strong> 6</div>
-          <div class="tag"><strong>Format:</strong> Double Elim</div>
-          <div class="tag"><strong>Series:</strong> BO3 (GF may require two wins)</div>
+
+      <div class="section-title" style="margin-top: 40px;">Lower Bracket</div>
+      <div class="column-layout">
+        <div>
+          <div id="match-M6" class="match-card"></div>
+          <div id="match-M7" class="match-card"></div>
+        </div>
+        <div>
+          <div id="match-M8" class="match-card"></div>
+          <div id="match-M9" class="match-card"></div>
         </div>
       </div>
+
     </div>
 
-    <div class="layout">
-      <!-- LEFT: UPPER + LOWER BRACKETS -->
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Bracket</div>
-            <div class="panel-sub">
-              Upper and Lower Brackets. Arrows and labels show progression; scores reflect series map wins.
-            </div>
-          </div>
-          <div class="status-pill" id="sync-status">
-            Last update: — 
-          </div>
-        </div>
+    <div class="panel-section">
+      <div class="section-title">Grand Finals</div>
+      
+      <div id="match-M10" class="match-card grand-final-card"></div>
+      <div id="match-M11" class="match-card" style="opacity: 0.8; transform: scale(0.95);"></div>
+      <div style="font-size:0.7rem; color:#666; text-align:center; margin-top:-10px;">(Reset Match - If Needed)</div>
 
-        <div class="column-group">
-          <!-- Column 1: Upper Round 1 -->
-          <div>
-            <div class="column-label">Upper Round 1</div>
-            <div id="match-M1" class="match-card"></div>
-            <div id="match-M2" class="match-card"></div>
-          </div>
-
-          <!-- Column 2: Upper Semifinals & Final -->
-          <div>
-            <div class="column-label">Upper Bracket</div>
-            <div id="match-M3" class="match-card"></div>
-            <div id="match-M4" class="match-card"></div>
-            <div id="match-M5" class="match-card"></div>
-          </div>
-
-          <!-- Column 3: Lower Bracket -->
-          <div>
-            <div class="column-label">Lower Bracket</div>
-            <div id="match-M6" class="match-card"></div>
-            <div id="match-M7" class="match-card"></div>
-            <div id="match-M8" class="match-card"></div>
-            <div id="match-M9" class="match-card"></div>
-          </div>
-        </div>
-
-        <div class="note">
-          Bracket flow: Upper R1 (M1, M2) → Upper Semis (M3, M4) → Upper Final (M5). Lower bracket: M6 → M7 → M8 → M9 (Lower Final). Grand Finals: M10, M11 (if reset needed).
-        </div>
+      <div class="champion-box">
+        <canvas id="confetti-canvas"></canvas>
+        <div class="champion-label">TOURNAMENT CHAMPION</div>
+        <div class="champion-name" id="champion-name">TBD</div>
       </div>
 
-      <!-- RIGHT: GRAND FINAL + TEAMS + CHAMPION -->
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Grand Final & Teams</div>
-            <div class="panel-sub">
-              Grand Final supports a reset series if the undefeated team loses the first match.
-            </div>
-          </div>
-        </div>
-
-        <div class="finals-block">
-          <div>
-            <div class="finals-group-label">Grand Final</div>
-            <div id="match-M10" class="match-card"></div>
-          </div>
-
-          <div>
-            <div class="finals-group-label">Grand Final Reset (If Needed)</div>
-            <div id="match-M11" class="match-card"></div>
-            <div class="note">
-              If the team coming from the Lower Bracket defeats the undefeated team in the first Grand Final series,
-              a reset (M11) may be played. Champion display below reflects the final result.
-            </div>
-          </div>
-
-          <div>
-            <div class="finals-group-label">Champion</div>
-            <div id="champion-display"></div>
-          </div>
-
-          <div>
-            <div class="finals-group-label">Seeded Teams</div>
-            <ul class="teams-list">
-              <li>1 – St. Joseph</li>
-              <li>2 – West Ottawa High School</li>
-              <li>3 – Buchanan High School</li>
-              <li>4 – Watervliet High School</li>
-              <li>5 – Marcellus High School</li>
-              <li>6 – Michigan Lutheran Highschool</li>
-            </ul>
-          </div>
-        </div>
+      <div class="section-title" style="margin-top: 30px;">Seeds</div>
+      <div class="teams-list">
+        <ul>
+          <li><span>01</span> St. Joseph</li>
+          <li><span>02</span> West Ottawa HS</li>
+          <li><span>03</span> Buchanan HS</li>
+          <li><span>04</span> Watervliet HS</li>
+          <li><span>05</span> Marcellus HS</li>
+          <li><span>06</span> MI Lutheran HS</li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <!-- Modal Overlay for Enlarged Cards -->
   <div id="modal-overlay" class="modal-overlay">
-    <div class="close-modal" id="close-modal">×</div>
     <div id="modal-content"></div>
-    <div class="modal-hint">Click outside or press ESC to close</div>
   </div>
 
-  <script>
-    // ======== VALORANT BACKEND API URL ====================================
+<script>
     const API_URL = 'https://script.google.com/macros/s/AKfycby2qfCjs2NsQ9NgjC0c_4N9vGbSWERCKH2XISsrkW_bBPCJ9Gi6ucY3dpqmTXPCQrj-UQ/exec';
-    // ======================================================================
 
-    // Match metadata (default labels if backend doesn't provide any)
     const matchDefinitions = {
-  M1: { id: 'M1', label: 'Upper Round 1 (3 Buchanan vs 6 Michigan Lutheran)' },
-  M2: { id: 'M2', label: 'Upper Round 1 (4 Watervliet vs 5 Marcellus)' },
-  M3: { id: 'M3', label: 'Upper Semifinal (1 St. Joseph vs winner of M2)' },
-  M4: { id: 'M4', label: 'Upper Semifinal (2 West Ottawa vs winner of M1)' },
-  M5: { id: 'M5', label: 'Upper Final (Winner of M3 vs Winner of M4)' },
-  M6: { id: 'M6', label: 'Lower Round 1 (Loser M1 vs Loser M2)' },
-  M7: { id: 'M7', label: 'Lower Round 2 (Winner M6 vs Loser M3)' },
-  M8: { id: 'M8', label: 'Lower Round 3 (Winner M7 vs Loser M4)' },
-  M9: { id: 'M9', label: 'Lower Final (Winner M8 vs Loser M5)' },
-  M10: { id: 'M10', label: 'Grand Final (First Series)' },
-  M11: { id: 'M11', label: 'Grand Final Reset (if needed)' }
-};
-
-    // Store previous state to detect changes
-    let previousState = {
-      matches: {},
-      champion: null
+      M1: { id: 'M1', label: 'Upper Round 1' },
+      M2: { id: 'M2', label: 'Upper Round 1' },
+      M3: { id: 'M3', label: 'Upper Semifinal' },
+      M4: { id: 'M4', label: 'Upper Semifinal' },
+      M5: { id: 'M5', label: 'Upper Final' },
+      M6: { id: 'M6', label: 'Lower Round 1' },
+      M7: { id: 'M7', label: 'Lower Round 2' },
+      M8: { id: 'M8', label: 'Lower Round 3' },
+      M9: { id: 'M9', label: 'Lower Final' },
+      M10: { id: 'M10', label: 'Grand Final' },
+      M11: { id: 'M11', label: 'Bracket Reset' }
     };
 
-    function createEmptyMatchCard(id) {
-      const def = matchDefinitions[id];
-      const card = document.getElementById(`match-${id}`);
-      if (!card) return;
+    let prevChampion = "";
 
-      card.innerHTML = `
-        <div class="match-id">${def.id}</div>
-        <div class="match-label">${def.label}</div>
-        <div class="team-row">
-          <span class="team-name tbd" id="match-${id}-t1-name">TBD</span>
-          <span class="score-pill" id="match-${id}-t1-score">0</span>
+    // --- RENDER HELPERS ---
+    
+    // Generate the HTML for map pips instead of just a number
+    function getPipHtml(score, isWinner) {
+      // Assuming Bo3: max 2 wins. If score > 2 (Bo5), adjust logic.
+      // scoreStr might be "0", "1", "2".
+      let wins = parseInt(score) || 0;
+      let html = '<div class="score-container">';
+      // Always show 2 pips for Bo3 visual
+      for(let i=0; i<2; i++) {
+        let filledClass = i < wins ? 'filled' : '';
+        let winnerClass = (i < wins && isWinner) ? 'winner' : '';
+        html += `<div class="map-pip ${filledClass} ${winnerClass}"></div>`;
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderCard(id, data) {
+      const def = matchDefinitions[id];
+      const t1 = data?.t1Name || 'TBD';
+      const t2 = data?.t2Name || 'TBD';
+      const s1 = data?.t1Score || 0;
+      const s2 = data?.t2Score || 0;
+
+      const t1Class = t1 === 'TBD' ? 'tbd' : '';
+      const t2Class = t2 === 'TBD' ? 'tbd' : '';
+
+      // Determine winner for highlight
+      const s1Num = parseInt(s1) || 0;
+      const s2Num = parseInt(s2) || 0;
+      const t1WinClass = (s1Num > s2Num && s1Num >= 2) ? 'is-winner' : (s2Num > s1Num && s2Num >= 2) ? 'is-loser' : '';
+      const t2WinClass = (s2Num > s1Num && s2Num >= 2) ? 'is-winner' : (s1Num > s2Num && s1Num >= 2) ? 'is-loser' : '';
+
+      const t1Pips = getPipHtml(s1, s1Num > s2Num);
+      const t2Pips = getPipHtml(s2, s2Num > s1Num);
+
+      return `
+        <div class="match-meta">
+          <span>${def.id}</span>
+          <span>${def.label}</span>
         </div>
-        <div class="team-row">
-          <span class="team-name tbd" id="match-${id}-t2-name">TBD</span>
-          <span class="score-pill" id="match-${id}-t2-score">0</span>
+        <div class="team-row ${t1WinClass}">
+          <span class="team-name ${t1Class}">${t1}</span>
+          ${t1Pips}
+        </div>
+        <div class="team-row ${t2WinClass}">
+          <span class="team-name ${t2Class}">${t2}</span>
+          ${t2Pips}
         </div>
       `;
     }
 
-    function initBracketShell() {
-      Object.keys(matchDefinitions).forEach(id => {
-        createEmptyMatchCard(id);
-      });
+    // --- MAIN LOGIC ---
 
-      // Champion banner initial state
-      const championContainer = document.getElementById('champion-display');
-      championContainer.innerHTML = `
-        <div class="champion-banner" id="champion-banner">
-          <div>
-            <div class="champion-title">Champion</div>
-            <div class="champion-name">TBD</div>
-          </div>
-          <div class="champion-sub">
-            Once the final Valorant series is complete, the champion will be displayed here.
-          </div>
-        </div>
-      `;
-    }
+    async function updateBracket() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const matches = data.matches || {};
 
-    function triggerPopAnimation(elementId, isBig = false) {
-      const element = document.getElementById(elementId);
-      if (!element) return;
+        // 1. Update Matches
+        Object.keys(matchDefinitions).forEach(key => {
+          const el = document.getElementById(`match-${key}`);
+          if(el) {
+            // Only update DOM if content changes to prevent flickering (simple check)
+            const newHTML = renderCard(key, matches[key]);
+            if(el.innerHTML !== newHTML) {
+               el.innerHTML = newHTML;
+            }
+          }
+        });
 
-      const animationClass = isBig ? 'pop-big-animation' : 'pop-animation';
-      
-      // Remove animation class if it exists
-      element.classList.remove('pop-animation', 'pop-big-animation');
-      
-      // Trigger reflow to restart animation
-      void element.offsetWidth;
-      
-      // Add animation class
-      element.classList.add(animationClass);
-      
-      // Remove class after animation completes
-      setTimeout(() => {
-        element.classList.remove(animationClass);
-      }, isBig ? 600 : 400);
-    }
-
-    function updateMatchFromData(id, matchData) {
-      const def = matchDefinitions[id];
-      const t1NameEl = document.getElementById(`match-${id}-t1-name`);
-      const t2NameEl = document.getElementById(`match-${id}-t2-name`);
-      const t1ScoreEl = document.getElementById(`match-${id}-t1-score`);
-      const t2ScoreEl = document.getElementById(`match-${id}-t2-score`);
-      const card = document.getElementById(`match-${id}`);
-
-      if (!card || !t1NameEl || !t2NameEl || !t1ScoreEl || !t2ScoreEl) return;
-
-      const t1Name = matchData?.t1Name?.trim() || '';
-      const t2Name = matchData?.t2Name?.trim() || '';
-      const t1ScoreStr = matchData?.t1Score ?? '';
-      const t2ScoreStr = matchData?.t2Score ?? '';
-
-      const t1Score = t1ScoreStr === '' ? null : Number(t1ScoreStr);
-      const t2Score = t2ScoreStr === '' ? null : Number(t2ScoreStr);
-
-      // Check if scores changed
-      const prevMatch = previousState.matches[id];
-      const scoresChanged = prevMatch && 
-        (prevMatch.t1Score !== t1ScoreStr || prevMatch.t2Score !== t2ScoreStr);
-
-      // Update names
-      if (t1Name) {
-        t1NameEl.textContent = t1Name;
-        t1NameEl.classList.remove('tbd');
-      } else {
-        t1NameEl.textContent = 'TBD';
-        t1NameEl.classList.add('tbd');
-      }
-
-      if (t2Name) {
-        t2NameEl.textContent = t2Name;
-        t2NameEl.classList.remove('tbd');
-      } else {
-        t2NameEl.textContent = 'TBD';
-        t2NameEl.classList.add('tbd');
-      }
-
-      // Reset pill classes
-      t1ScoreEl.className = 'score-pill';
-      t2ScoreEl.className = 'score-pill';
-
-      // If no numeric scores, keep them neutral
-      if (Number.isNaN(t1Score) || Number.isNaN(t2Score) || t1Score === null || t2Score === null) {
-        t1ScoreEl.textContent = t1ScoreStr || '0';
-        t2ScoreEl.textContent = t2ScoreStr || '0';
-      } else {
-        t1ScoreEl.textContent = t1Score;
-        t2ScoreEl.textContent = t2Score;
-
-        if (t1Score !== t2Score) {
-          if (t1Score > t2Score) {
-            t1ScoreEl.classList.add('winner');
-            t2ScoreEl.classList.add('loser');
-          } else {
-            t2ScoreEl.classList.add('winner');
-            t1ScoreEl.classList.add('loser');
+        // 2. Update Champion
+        const champName = data.championName || 'TBD';
+        const champEl = document.getElementById('champion-name');
+        
+        if(champName !== champEl.innerText) {
+          champEl.innerText = champName;
+          if(champName !== 'TBD' && champName !== prevChampion) {
+             // Trigger Confetti
+             prevChampion = champName;
+             champEl.style.color = '#ff4655'; // Valorant Red
+             startConfetti();
           }
         }
-      }
 
-      // Trigger pop animation if scores changed
-      if (scoresChanged) {
-        triggerPopAnimation(`match-${id}`, false);
-      }
+        // 3. Status
+        document.getElementById('sync-status').innerText = 'LIVE // ' + new Date().toLocaleTimeString();
 
-      // Update previous state
-      previousState.matches[id] = {
-        t1Score: t1ScoreStr,
-        t2Score: t2ScoreStr
-      };
+      } catch (e) {
+        console.error(e);
+      }
     }
 
-    function applySnapshot(data) {
-      const matches = data?.matches || {};
-      // Update each match card from JSON
-      Object.keys(matchDefinitions).forEach(id => {
-        const m = matches[id] || {};
-        updateMatchFromData(id, m);
-      });
-
-      // Champion
-      const championName = (data?.championName || '').trim();
-      const championContainer = document.getElementById('champion-display');
+    // --- CONFETTI FX (Simple Canvas) ---
+    function startConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.offsetWidth;
+      canvas.height = canvas.parentElement.offsetHeight;
       
-      // Check if champion changed
-      const championChanged = previousState.champion !== championName && championName !== '';
-      
-      championContainer.innerHTML = '';
-
-      const banner = document.createElement('div');
-      banner.className = 'champion-banner';
-      banner.id = 'champion-banner';
-
-      if (!championName) {
-        banner.innerHTML = `
-          <div>
-            <div class="champion-title">Champion</div>
-            <div class="champion-name">TBD</div>
-          </div>
-          <div class="champion-sub">
-            Once the tournament director confirms the final result in the control panel,
-            the champion will be displayed here.
-          </div>
-        `;
-      } else {
-        banner.innerHTML = `
-          <div>
-            <div class="champion-title">Champion</div>
-            <div class="champion-name">${championName}</div>
-          </div>
-          <div class="champion-sub">
-            Crowned after navigating the double-elimination bracket. Grand Final may have required two series wins.
-          </div>
-        `;
-      }
-
-      championContainer.appendChild(banner);
-
-      // Trigger pop animation if champion changed
-      if (championChanged) {
-        setTimeout(() => {
-          triggerPopAnimation('champion-banner', true);
-        }, 100);
-      }
-
-      // Update previous champion state
-      previousState.champion = championName;
-
-      // Sync status
-      const syncStatus = document.getElementById('sync-status');
-      const ts = data?.updatedAt ? new Date(data.updatedAt) : null;
-      if (ts) {
-        syncStatus.classList.add('live');
-        syncStatus.textContent = `Last update: ${ts.toLocaleTimeString()}`;
-      } else {
-        syncStatus.classList.remove('live');
-        syncStatus.textContent = 'Last update: —';
-      }
-    }
-
-    async function fetchFromServer() {
-      try {
-        const res = await fetch(API_URL, { method: 'GET' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        applySnapshot(data);
-      } catch (err) {
-        console.error('Failed to fetch Valorant bracket data:', err);
-      }
-    }
-
-    function startLiveUpdates() {
-      // Initial fetch
-      fetchFromServer();
-      // Poll every 10 seconds
-      setInterval(fetchFromServer, 10000);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initBracketShell();
-      startLiveUpdates();
-      initModalHandlers();
-    });
-
-    // ======== MODAL FUNCTIONALITY ====================================
-    function initModalHandlers() {
-      const modal = document.getElementById('modal-overlay');
-      const closeBtn = document.getElementById('close-modal');
-      const modalContent = document.getElementById('modal-content');
-
-      // Close modal on close button
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeModal();
-      });
-
-      // Close modal on overlay click (but not on card click)
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          closeModal();
-        }
-      });
-
-      // Close modal on ESC key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-          closeModal();
-        }
-      });
-
-      // Add click handlers to all match cards
-      function attachCardClickHandlers() {
-        const matchCards = document.querySelectorAll('.match-card');
-        matchCards.forEach(card => {
-          card.addEventListener('click', function() {
-            const matchId = this.id.replace('match-', '');
-            openModalWithMatch(matchId);
-          });
+      let particles = [];
+      for(let i=0; i<50; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          speed: Math.random() * 3 + 2,
+          color: Math.random() > 0.5 ? '#ff4655' : '#38bdf8',
+          size: Math.random() * 4 + 2
         });
       }
 
-      // Initial attachment
-      attachCardClickHandlers();
-
-      // Reattach after updates (since cards might be recreated)
-      const originalApplySnapshot = window.applySnapshot;
-      window.applySnapshot = function(data) {
-        originalApplySnapshot(data);
-        attachCardClickHandlers();
-      };
+      function animate() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p => {
+          p.y += p.speed;
+          if(p.y > canvas.height) p.y = -10;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size); // Square confetti
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
     }
 
-    function openModalWithMatch(matchId) {
-      const modal = document.getElementById('modal-overlay');
-      const modalContent = document.getElementById('modal-content');
-      
-      const def = matchDefinitions[matchId];
-      const t1NameEl = document.getElementById(`match-${matchId}-t1-name`);
-      const t2NameEl = document.getElementById(`match-${matchId}-t2-name`);
-      const t1ScoreEl = document.getElementById(`match-${matchId}-t1-score`);
-      const t2ScoreEl = document.getElementById(`match-${matchId}-t2-score`);
-
-      if (!def || !t1NameEl || !t2NameEl) return;
-
-      const t1Name = t1NameEl.textContent;
-      const t2Name = t2NameEl.textContent;
-      const t1Score = t1ScoreEl.textContent;
-      const t2Score = t2ScoreEl.textContent;
-      const t1Classes = t1NameEl.className;
-      const t2Classes = t2NameEl.className;
-      const t1ScoreClasses = t1ScoreEl.className;
-      const t2ScoreClasses = t2ScoreEl.className;
-
-      modalContent.innerHTML = `
-        <div class="match-card-enlarged">
-          <div class="match-id">${def.id}</div>
-          <div class="match-label">${def.label}</div>
-          <div class="team-row">
-            <span class="team-name ${t1Classes}">${t1Name}</span>
-            <span class="${t1ScoreClasses}">${t1Score}</span>
+    // --- MODAL LOGIC ---
+    const modal = document.getElementById('modal-overlay');
+    
+    document.addEventListener('click', e => {
+      const card = e.target.closest('.match-card');
+      if(card) {
+        const content = card.innerHTML;
+        // Strip pips for modal, use numbers for clarity? Or keep pips.
+        // Let's make a simplified big version.
+        const id = card.id.replace('match-', '');
+        const def = matchDefinitions[id];
+        // We parse the DOM specifically for the text content to put in modal
+        const names = card.querySelectorAll('.team-name');
+        
+        // Simple big modal
+        document.getElementById('modal-content').innerHTML = `
+          <div class="match-card-enlarged">
+            <div style="color:#555; font-size:0.8rem; margin-bottom:10px;">${def.label} (${id})</div>
+            <div style="font-size:1.5rem; color:white; margin-bottom:10px;">${names[0].innerText}</div>
+            <div style="height:1px; background:#333; margin:10px 0;"></div>
+            <div style="font-size:1.5rem; color:white;">${names[1].innerText}</div>
+            <div style="margin-top:20px; color:#ff4655; font-size:0.8rem;">Click outside to close</div>
           </div>
-          <div class="team-row">
-            <span class="team-name ${t2Classes}">${t2Name}</span>
-            <span class="${t2ScoreClasses}">${t2Score}</span>
-          </div>
-        </div>
-      `;
+        `;
+        modal.classList.add('active');
+      }
 
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
+      if(e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
 
-    function closeModal() {
-      const modal = document.getElementById('modal-overlay');
-      modal.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-    // ================================================================
-  </script>
+    // Init
+    updateBracket();
+    setInterval(updateBracket, 10000);
+
+</script>
 </body>
 </html>
