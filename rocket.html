@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Scholastic Rocket League – Live Dashboard</title>
+  <title>Scholastic Rocket League – Tactical Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,6 +32,7 @@
       flex-direction: column;
     }
 
+    /* Animated Grid */
     .bg-grid {
       position: fixed; top: 0; left: 0; width: 200%; height: 200%;
       background-image: linear-gradient(rgba(0, 157, 255, 0.03) 1px, transparent 1px),
@@ -42,11 +43,12 @@
     }
     @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(-50px, -50px); } }
 
+    /* Header */
     .header-block {
       display: flex; justify-content: space-between; align-items: flex-end;
       margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
     }
-    h1 { font-size: 2.2rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
+    h1 { font-size: 2.2rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; line-height: 1; text-shadow: 0 0 20px rgba(0, 157, 255, 0.4); }
     .sub-h1 { font-family: 'Share Tech Mono'; color: var(--rl-orange); font-size: 0.9rem; margin-top: 5px; }
     
     .status-pill {
@@ -57,6 +59,7 @@
     .pulse { width: 8px; height: 8px; background: var(--rl-blue); border-radius: 50%; animation: blink 2s infinite; }
     @keyframes blink { 0%{opacity:1} 50%{opacity:0.3} 100%{opacity:1} }
 
+    /* Layout */
     .grid-layout {
       display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px;
       width: 100%; max-width: 1600px; margin: 0 auto;
@@ -67,58 +70,62 @@
       background: rgba(20, 27, 45, 0.9); border: 1px solid rgba(255,255,255,0.05); padding: 20px;
       display: flex; flex-direction: column; gap: 15px; position: relative;
     }
-    .panel::before {
-      content:""; position:absolute; top:0; left:0; width:10px; height:10px;
-      border-top:2px solid var(--rl-blue); border-left:2px solid var(--rl-blue);
-    }
+    /* Tech Corners */
+    .panel::before { content:""; position:absolute; top:0; left:0; width:15px; height:15px; border-top:2px solid var(--rl-blue); border-left:2px solid var(--rl-blue); }
+    .panel::after { content:""; position:absolute; bottom:0; right:0; width:15px; height:15px; border-bottom:2px solid var(--rl-orange); border-right:2px solid var(--rl-orange); }
+
     .panel-title {
       font-size: 1.1rem; text-transform: uppercase; color: var(--rl-blue);
-      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; letter-spacing: 1px;
     }
 
-    /* STANDINGS */
-    .standings-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .standings-table th { text-align: left; color: var(--text-muted); font-size: 0.75rem; padding: 5px; }
-    .standings-table td { padding: 8px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .q-row { background: linear-gradient(90deg, rgba(0,157,255,0.1), transparent); }
-    .q-row td:first-child { color: var(--rl-blue); font-weight: bold; border-left: 3px solid var(--rl-blue); padding-left: 10px; }
+    /* Standings Table */
+    .standings-table { width: 100%; border-collapse: separate; border-spacing: 0 4px; font-size: 0.9rem; }
+    .standings-table th { text-align: left; color: var(--text-muted); font-size: 0.75rem; padding: 5px; font-family:'Share Tech Mono'; }
+    .standings-table td { padding: 10px 8px; background: #1e273b; }
+    
+    .q-row td { background: linear-gradient(90deg, rgba(0,157,255,0.15), rgba(30,39,59,1)); }
+    .q-row td:first-child { border-left: 3px solid var(--rl-blue); color: #fff; text-shadow: 0 0 10px var(--rl-blue); }
 
-    /* MATCH CARDS */
+    /* Match Cards */
     .matches-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
     .match-card {
-      background: #1b2333; padding: 10px; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
-      border-left: 2px solid transparent;
+      background: #1b2333; padding: 12px; 
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+      border-left: 2px solid transparent; transition: transform 0.2s;
     }
+    .match-card:hover { transform: translateY(-2px); background: #232d42; }
     .match-card.complete { border-left-color: var(--rl-orange); }
     
-    .match-header { font-size: 0.7rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .match-header { font-size: 0.7rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 8px; font-family:'Share Tech Mono'; }
     
-    .team-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-    .team-row.winner .t-name { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
-    .t-name { font-weight: 600; font-size: 0.9rem; }
+    .team-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; background:rgba(0,0,0,0.2); margin-bottom:2px; border-radius:4px; }
+    .team-row.winner { background: linear-gradient(90deg, rgba(0,157,255,0.2), transparent); }
+    .team-row.winner .t-name { color: #fff; text-shadow: 0 0 10px rgba(0,157,255,0.5); }
+    .t-name { font-weight: 600; font-size: 0.95rem; }
     
-    /* PIPS */
-    .pips { display: flex; gap: 3px; }
+    /* Pips (Series Wins) */
+    .pips { display: flex; gap: 4px; }
     .pip { width: 8px; height: 8px; background: #334155; transform: skewX(-20deg); }
-    .pip.won { background: var(--rl-blue); box-shadow: 0 0 5px var(--rl-blue); }
+    .pip.won { background: var(--rl-blue); box-shadow: 0 0 8px var(--rl-blue); }
 
-    /* FINALS */
+    /* Finals Panel */
     .final-box {
       background: linear-gradient(135deg, #1b2333 0%, #0f141f 100%);
       border: 1px solid var(--rl-orange); padding: 20px; text-align: center;
       clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
       min-height: 300px; display: flex; flex-direction: column; justify-content: center;
     }
-    .f-team { font-size: 1.6rem; font-weight: 800; margin: 10px 0; text-transform: uppercase; }
+    .f-team { font-size: 1.8rem; font-weight: 800; margin: 10px 0; text-transform: uppercase; }
     .f-team.tbd { color: var(--text-muted); font-size: 1.2rem; font-style: italic; }
     
-    .bo5-pips { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; }
-    .pip-lg { width: 12px; height: 18px; background: #334155; transform: skewX(-20deg); border: 1px solid rgba(255,255,255,0.1); }
-    .pip-lg.won { background: var(--rl-orange); box-shadow: 0 0 10px var(--rl-orange); border-color: #fff; }
+    .bo5-pips { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+    .pip-lg { width: 14px; height: 24px; background: #334155; transform: skewX(-20deg); border: 1px solid rgba(255,255,255,0.1); }
+    .pip-lg.won { background: var(--rl-orange); box-shadow: 0 0 15px var(--rl-orange); border-color: #fff; }
 
-    .champ-area { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
-    .c-name { font-size: 2rem; font-weight: 800; color: var(--rl-blue); text-shadow: 0 0 20px var(--rl-blue); }
-
+    .champ-area { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+    .c-name { font-size: 2.5rem; font-weight: 800; color: var(--rl-blue); text-shadow: 0 0 30px var(--rl-blue); line-height:1; }
+    
     #confetti { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
   </style>
 </head>
@@ -129,7 +136,7 @@
   <div class="header-block">
     <div>
       <h1>Scholastic Rocket League</h1>
-      <div class="sub-h1">LIVE DASHBOARD // ROUND ROBIN + FINALS</div>
+      <div class="sub-h1">ROUND ROBIN (BO3) -> FINALS (BO5)</div>
     </div>
     <div class="status-pill">
       <div class="pulse"></div> <span id="sync-status">CONNECTING...</span>
@@ -139,50 +146,50 @@
   <div class="grid-layout">
     
     <div class="panel">
-      <div class="panel-title">Live Standings</div>
+      <div class="panel-title">Standings</div>
       <table class="standings-table">
         <thead>
           <tr>
             <th>Team</th>
-            <th style="text-align:center;">W-L</th>
-            <th style="text-align:center;">GD</th>
+            <th style="text-align:center;">Match W-L</th>
+            <th style="text-align:center;">Game Diff</th>
           </tr>
         </thead>
         <tbody id="standings-body">
           </tbody>
       </table>
-      <div style="margin-top:auto; font-size:0.7rem; color:var(--text-muted);">
-        * Top 2 advance to Grand Final.<br>
-        * Tiebreakers: Match Wins > Goal Diff.
+      <div style="margin-top:auto; font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
+        Top 2 teams advance.<br>
+        Sort: Match Wins > Game Differential (Games Won - Games Lost).
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">Group Stage (BO3)</div>
+      <div class="panel-title">Group Stage (Best of 3)</div>
       <div class="matches-grid" id="matches-container">
         </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">Championship (BO5)</div>
+      <div class="panel-title">Championship (Best of 5)</div>
       <div class="final-box">
-        <div style="color:var(--rl-orange); font-family:'Share Tech Mono'; font-size:0.9rem; letter-spacing:2px;">GRAND FINAL</div>
+        <div style="color:var(--rl-orange); font-family:'Share Tech Mono'; font-size:0.9rem; letter-spacing:2px; margin-bottom:10px;">GRAND FINAL</div>
         
-        <div class="f-team tbd" id="final-t1-name">TBD</div>
+        <div class="f-team tbd" id="final-t1-name">Top Seed</div>
         <div class="bo5-pips" id="final-t1-pips">
           <div class="pip-lg"></div><div class="pip-lg"></div><div class="pip-lg"></div>
         </div>
 
-        <div style="font-size:0.8rem; color:#555; margin: 5px 0;">VS</div>
+        <div style="font-size:0.9rem; color:#555; font-weight:bold;">VS</div>
 
-        <div class="f-team tbd" id="final-t2-name">TBD</div>
+        <div class="f-team tbd" id="final-t2-name">2nd Seed</div>
         <div class="bo5-pips" id="final-t2-pips">
           <div class="pip-lg"></div><div class="pip-lg"></div><div class="pip-lg"></div>
         </div>
 
         <div class="champ-area">
           <canvas id="confetti"></canvas>
-          <div style="font-size:0.7rem; color:#888; letter-spacing:2px; margin-bottom:5px;">CHAMPION</div>
+          <div style="font-size:0.8rem; color:#888; letter-spacing:3px; margin-bottom:5px;">CHAMPION</div>
           <div class="c-name" id="champion-name">TBD</div>
         </div>
       </div>
@@ -191,11 +198,14 @@
   </div>
 
 <script>
-  // --- CONFIGURATION ---
-  // Your exact Google Script URL
+  // ============================================
+  // CONFIGURATION
+  // ============================================
+  
+  // Your Google Apps Script Web App URL
   const API_URL = 'https://script.google.com/macros/s/AKfycbxWWnjyvwawcKKf0wtVya6M8GQHdGM9gcgz48C6T0CzoZ8gFxbXyaSAt0vdx9fhv_G4IQ/exec';
 
-  // Team Definitions
+  // Team Definitions (ID matches Schedule)
   const teams = [
     { id: "T1", name: "Cassopolis" },
     { id: "T2", name: "Otsego" },
@@ -203,7 +213,7 @@
     { id: "T4", name: "MI Lutheran" }
   ];
 
-  // Match Schedule (IDs must match what you send from Backend)
+  // Match Schedule (IDs must match your Backend Data keys)
   const schedule = [
     { id: "G1", t1: "T1", t2: "T2" },
     { id: "G2", t1: "T3", t2: "T4" },
@@ -215,7 +225,31 @@
 
   let prevChampion = "";
 
-  // --- CORE LOGIC: Process Raw Data ---
+  // ============================================
+  // LOGIC
+  // ============================================
+
+  // Helper to safely find a score in the backend object regardless of key naming
+  // tries: g1t1, game1_t1, Game 1 T1, etc.
+  function getScoreSafe(dataObj, gameNum, teamNum) {
+    if (!dataObj) return -1;
+    
+    const possibleKeys = [
+      `g${gameNum}t${teamNum}`,           // g1t1
+      `game${gameNum}_t${teamNum}`,       // game1_t1
+      `Game ${gameNum} T${teamNum}`,      // Game 1 T1
+      `G${gameNum}T${teamNum}`,           // G1T1
+      `game${gameNum}t${teamNum}`         // game1t1
+    ];
+
+    for (let key of possibleKeys) {
+      if (dataObj[key] !== undefined && dataObj[key] !== "") {
+        return parseInt(dataObj[key], 10);
+      }
+    }
+    return -1; // Not found
+  }
+
   function processData(serverData) {
     const matches = serverData.matches || {};
     const teamStats = {};
@@ -227,44 +261,50 @@
 
     const processedMatches = [];
 
-    // 1. Process Group Stage
+    // 1. Process Group Stage (Loop through defined schedule)
     schedule.forEach((m, index) => {
-      const mData = matches[m.id] || {}; // Expecting object with Game Scores inside
+      const mData = matches[m.id] || {};
       
-      // Calculate Series Winner based on Game Scores (BO3)
-      // We look for keys like "Game 1 T1", "Game 1 T2" OR generic index
-      // To be safe, we check multiple formats or iterate 1-3
-      let sWins1 = 0;
-      let sWins2 = 0;
-      let sPlayed = 0;
-
+      let sWins1 = 0; // Series Wins for Team 1
+      let sWins2 = 0; // Series Wins for Team 2
+      
+      // Check Games 1 through 3
       for(let g=1; g<=3; g++) {
-        // Try to find the score in the raw data. 
-        // Common ID patterns: "g1t1", "G1_1_1", etc. 
-        // We will rely on the standard structure: matches[MatchID].games[0].t1
-        // OR flat keys matches[MatchID].g1t1
-        
-        const score1 = parseInt(mData[`game${g}_t1`] || mData[`g${g}t1`] || -1);
-        const score2 = parseInt(mData[`game${g}_t2`] || mData[`g${g}t2`] || -1);
+        const score1 = getScoreSafe(mData, g, 1); // Get Score for Game G, Team 1
+        const score2 = getScoreSafe(mData, g, 2); // Get Score for Game G, Team 2
 
         if(score1 >= 0 && score2 >= 0) {
-          sPlayed++;
-          // Update Goal Diff immediately
-          teamStats[m.t1].gf += score1;
-          teamStats[m.t1].ga += score2;
-          teamStats[m.t2].gf += score2;
-          teamStats[m.t2].ga += score1;
+          // This game has been played
+          teamStats[m.t1].gf++; // Games For (Games Won)
+          teamStats[m.t1].ga++; // Games Played tally (Wait, logic correction below)
           
-          if(score1 > score2) sWins1++;
-          if(score2 > score1) sWins2++;
+          if(score1 > score2) {
+             sWins1++;
+             // In Standing: Games Won (GF) increases for T1
+             // GD increases for T1, decreases for T2
+             // Actually, usually GD is calculated on Games Won vs Games Lost in series
+          }
+          if(score2 > score1) {
+             sWins2++;
+          }
         }
       }
 
-      // Did someone win the series?
+      // Determine Series Winner (BO3)
       const isFinished = (sWins1 >= 2 || sWins2 >= 2);
+      
       if(isFinished) {
-        if(sWins1 > sWins2) { teamStats[m.t1].wins++; teamStats[m.t2].losses++; }
-        else { teamStats[m.t2].wins++; teamStats[m.t1].losses++; }
+        if(sWins1 > sWins2) { 
+          teamStats[m.t1].wins++; 
+          teamStats[m.t2].losses++; 
+        } else { 
+          teamStats[m.t2].wins++; 
+          teamStats[m.t1].losses++; 
+        }
+        
+        // Update Game Differential (Games Won - Games Lost)
+        teamStats[m.t1].gd += (sWins1 - sWins2);
+        teamStats[m.t2].gd += (sWins2 - sWins1);
       }
 
       processedMatches.push({
@@ -275,26 +315,23 @@
       });
     });
 
-    // 2. Calculate Standings (Wins > GD)
-    Object.keys(teamStats).forEach(id => {
-      teamStats[id].gd = teamStats[id].gf - teamStats[id].ga;
-    });
-
+    // 2. Calculate Standings
     const standings = Object.values(teamStats).sort((a, b) => {
-      if (b.wins !== a.wins) return b.wins - a.wins;
-      return b.gd - a.gd;
+      if (b.wins !== a.wins) return b.wins - a.wins; // Match Wins
+      return b.gd - a.gd; // Game Differential
     });
 
-    // 3. Process Grand Final (Top 2)
-    // Look for "FINAL" or "M7" or similar key in data
-    const finalData = matches["FINAL"] || matches["M7"] || matches["GF"] || {};
+    // 3. Process Grand Final (Check keys "FINAL", "M7", "GF")
+    // We look for 5 games
     let fWins1 = 0; 
     let fWins2 = 0;
     
-    // Check 5 games for final
+    // Try to find the finals object in common keys
+    const finalData = matches["FINAL"] || matches["M7"] || matches["GF"] || {};
+    
     for(let g=1; g<=5; g++) {
-      const s1 = parseInt(finalData[`game${g}_t1`] || finalData[`g${g}t1`] || -1);
-      const s2 = parseInt(finalData[`game${g}_t2`] || finalData[`g${g}t2`] || -1);
+      const s1 = getScoreSafe(finalData, g, 1);
+      const s2 = getScoreSafe(finalData, g, 2);
       if(s1 >= 0 && s2 >= 0) {
         if(s1 > s2) fWins1++;
         if(s2 > s1) fWins2++;
@@ -306,7 +343,8 @@
 
   // --- RENDER UI ---
   function render(data) {
-    // Standings
+    
+    // A. Render Standings
     const sBody = document.getElementById('standings-body');
     sBody.innerHTML = "";
     data.standings.forEach((t, i) => {
@@ -314,61 +352,56 @@
       const gdSign = t.gd > 0 ? "+" : "";
       sBody.innerHTML += `
         <tr class="${isQ ? 'q-row' : ''}">
-          <td>${t.name} ${isQ ? '<span style="font-size:0.7em;">[Q]</span>' : ''}</td>
-          <td style="text-align:center; font-family:'Share Tech Mono';">${t.wins}-${t.losses}</td>
+          <td>${t.name} ${isQ ? '<span style="font-size:0.7em; margin-left:5px;">[Q]</span>' : ''}</td>
+          <td style="text-align:center; font-family:'Share Tech Mono';">${t.wins} - ${t.losses}</td>
           <td style="text-align:center; font-family:'Share Tech Mono'; color:${t.gd>=0 ? '#4ade80':'#f87171'}">${gdSign}${t.gd}</td>
         </tr>
       `;
     });
 
-    // Group Matches
+    // B. Render Group Matches
     const mContainer = document.getElementById('matches-container');
     mContainer.innerHTML = "";
     data.processedMatches.forEach((m, i) => {
       const t1Name = teams.find(t=>t.id===m.t1).name;
       const t2Name = teams.find(t=>t.id===m.t2).name;
       
-      // Generate Pips
-      const getPipHtml = (wins) => {
-        let h = '<div class="pips">';
-        for(let k=0;k<2;k++) h+= `<div class="pip ${k<wins?'won':''}"></div>`;
-        h+='</div>'; return h;
-      };
+      const pips1 = getPipHtml(m.w1, m.w1 > m.w2 && m.finished);
+      const pips2 = getPipHtml(m.w2, m.w2 > m.w1 && m.finished);
 
       mContainer.innerHTML += `
         <div class="match-card ${m.finished ? 'complete' : ''}">
-          <div class="match-header"><span>MATCH ${i+1}</span><span>${m.finished ? 'FINAL' : 'LIVE'}</span></div>
+          <div class="match-header"><span>MATCH ${i+1}</span><span>${m.finished ? 'FINAL' : 'BO3'}</span></div>
           <div class="team-row ${m.w1 > m.w2 && m.finished ? 'winner' : ''}">
-            <span class="t-name">${t1Name}</span> ${getPipHtml(m.w1)}
+            <span class="t-name">${t1Name}</span> ${pips1}
           </div>
           <div class="team-row ${m.w2 > m.w1 && m.finished ? 'winner' : ''}">
-            <span class="t-name">${t2Name}</span> ${getPipHtml(m.w2)}
+            <span class="t-name">${t2Name}</span> ${pips2}
           </div>
         </div>
       `;
     });
 
-    // Grand Final
+    // C. Render Grand Final
     const ft1 = document.getElementById('final-t1-name');
     const ft2 = document.getElementById('final-t2-name');
     const fp1 = document.getElementById('final-t1-pips').children;
     const fp2 = document.getElementById('final-t2-pips').children;
     const champEl = document.getElementById('champion-name');
 
-    // Set Names
+    // Only set names if group stage has data
     if(data.standings[0].wins > 0 || data.standings[0].losses > 0) {
       ft1.innerText = data.standings[0].name; ft1.classList.remove('tbd');
       ft2.innerText = data.standings[1].name; ft2.classList.remove('tbd');
     }
 
-    // Set Pips (First to 3)
-    const maxWin = 3;
+    // Update Finals Pips (BO5 = 3 wins needed)
     for(let i=0; i<3; i++) {
       fp1[i].className = `pip-lg ${i < data.final.w1 ? 'won' : ''}`;
       fp2[i].className = `pip-lg ${i < data.final.w2 ? 'won' : ''}`;
     }
 
-    // Champion Logic
+    // Determine Champion
     let currentChamp = "TBD";
     if(data.final.w1 >= 3) currentChamp = data.standings[0].name;
     if(data.final.w2 >= 3) currentChamp = data.standings[1].name;
@@ -380,18 +413,26 @@
     }
   }
 
-  // --- FETCH LOOP ---
+  function getPipHtml(wins, isWinner) {
+    let h = '<div class="pips">';
+    // BO3 = max 2 wins displayed
+    for(let k=0; k<2; k++) {
+      h+= `<div class="pip ${k < wins ? 'won' : ''}"></div>`;
+    }
+    h+='</div>'; 
+    return h;
+  }
+
+  // --- MAIN LOOP ---
   async function tick() {
     try {
       const status = document.getElementById('sync-status');
-      status.innerText = "SYNCING...";
-      status.style.color = "var(--rl-orange)";
-
+      
       const res = await fetch(API_URL);
       const json = await res.json();
       
-      // Debug: Uncomment this to see exact data structure in Console
-      // console.log("Backend Data:", json);
+      // DEBUG: Look in your browser console to see what keys your server sends!
+      console.log("Server Data:", json); 
 
       const processed = processData(json);
       render(processed);
@@ -401,17 +442,18 @@
     } catch (e) {
       console.error(e);
       document.getElementById('sync-status').innerText = "ERROR";
+      document.getElementById('sync-status').style.color = "#ef4444";
     }
   }
 
-  // Confetti FX
+  // Confetti Animation
   function triggerConfetti() {
     const cvs = document.getElementById('confetti');
     const ctx = cvs.getContext('2d');
     cvs.width = cvs.parentElement.offsetWidth;
     cvs.height = cvs.parentElement.offsetHeight;
     let p = [];
-    for(let i=0; i<60; i++) p.push({x:Math.random()*cvs.width, y:Math.random()*cvs.height-cvs.height, c:Math.random()>.5?'#009dff':'#ff8d00', s:Math.random()*5+2, v:Math.random()*3+2});
+    for(let i=0; i<80; i++) p.push({x:Math.random()*cvs.width, y:Math.random()*cvs.height-cvs.height, c:Math.random()>.5?'#009dff':'#ff8d00', s:Math.random()*5+3, v:Math.random()*4+2});
     function anim(){
       ctx.clearRect(0,0,cvs.width,cvs.height);
       p.forEach(pt=>{ pt.y+=pt.v; if(pt.y>cvs.height)pt.y=-10; ctx.fillStyle=pt.c; ctx.fillRect(pt.x,pt.y,pt.s,pt.s); });
@@ -420,7 +462,7 @@
     anim();
   }
 
-  // Start
+  // Start polling
   tick();
   setInterval(tick, 5000);
 
