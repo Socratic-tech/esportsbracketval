@@ -2,869 +2,434 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Scholastic Rocket League Round Robin + BO5 Finals</title>
+  <title>Scholastic Rocket League – Championship Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #020617;
-      --panel: #0b1120;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.24);
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --border: #1f2937;
-      --success: #22c55e;
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.75);
-      --radius-lg: 18px;
+      --bg-dark: #0b0f19;
+      --panel: #141b2d;
+      --rl-blue: #009dff;
+      --rl-orange: #ff8d00;
+      --text-main: #ece8e1;
+      --text-muted: #6f7b9b;
+      --border: rgba(0, 157, 255, 0.1);
     }
 
     * { box-sizing: border-box; }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes shimmer {
-      0% {
-        background-position: -200% center;
-      }
-      100% {
-        background-position: 200% center;
-      }
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.6;
-      }
-    }
-
-    @keyframes glow {
-      0%, 100% {
-        box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), 0 0 40px rgba(56, 189, 248, 0.1);
-      }
-      50% {
-        box-shadow: 0 0 30px rgba(56, 189, 248, 0.5), 0 0 60px rgba(56, 189, 248, 0.2);
-      }
-    }
-
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, Helvetica, Arial, sans-serif;
-      background: #020617;
-      background-image: 
-        radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 90%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
-        linear-gradient(180deg, #0a0f1e 0%, #020617 100%);
-      color: var(--text);
-      padding: 24px;
+      font-family: 'Rajdhani', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* --- BACKGROUND GRID --- */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; width: 200%; height: 200%;
+      background-image: 
+        linear-gradient(rgba(0, 157, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 157, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -1;
+      animation: gridMove 40s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50px, -50px); }
+    }
+
+    /* --- HEADER --- */
+    .header-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
     }
 
     h1 {
-      margin: 0;
-      font-size: 1.6rem;
-      letter-spacing: 0.08em;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 800;
       text-transform: uppercase;
-      color: #f9fafb;
-      text-shadow: 0 2px 20px rgba(56, 189, 248, 0.4);
-      background: linear-gradient(135deg, #f9fafb 0%, #bae6fd 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 2.2rem;
+      margin: 0;
+      letter-spacing: 1px;
+      line-height: 1;
+      color: var(--text-main);
+      text-shadow: 0 0 20px rgba(0, 157, 255, 0.4);
     }
 
-    .subheading {
+    .sub-h1 {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--rl-orange);
       font-size: 0.9rem;
-      color: var(--muted);
-      max-width: 900px;
-      line-height: 1.5;
+      margin-top: 4px;
+      letter-spacing: 1px;
     }
 
-    .shell {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%);
-      border-radius: 24px;
-      padding: 18px 20px;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .shell::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.8), transparent);
-      animation: shimmer 3s infinite;
-    }
-
-    .toolbar {
+    .live-pill {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
       gap: 8px;
-      align-items: center;
+      font-family: 'Share Tech Mono', monospace;
       font-size: 0.8rem;
+      color: var(--rl-blue);
+      background: rgba(0, 157, 255, 0.05);
+      padding: 6px 16px;
+      border: 1px solid rgba(0, 157, 255, 0.3);
+      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
     }
 
-    .tag {
-      border-radius: 999px;
-      padding: 6px 12px;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(15, 23, 42, 0.8));
-      color: var(--muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    .pulse-dot {
+      width: 8px; height: 8px;
+      background: var(--rl-blue);
+      border-radius: 50%;
+      animation: pulseBlue 2s infinite;
     }
 
-    .tag:hover {
-      transform: translateY(-2px);
-      border-color: rgba(56, 189, 248, 0.5);
-      box-shadow: 0 6px 16px rgba(56, 189, 248, 0.2);
+    @keyframes pulseBlue {
+      0% { box-shadow: 0 0 0 0 rgba(0, 157, 255, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(0, 157, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 157, 255, 0); }
     }
 
-    .tag strong {
-      color: #e5e7eb;
-      font-weight: 600;
+    /* --- LAYOUT --- */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr 350px; /* Standings | Matches | Finals */
+      gap: 20px;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
     }
 
-    .btn {
-      border-radius: 999px;
-      padding: 6px 14px;
-      border: 1px solid rgba(248, 250, 252, 0.15);
-      background: linear-gradient(135deg, #020617, #020617);
-      color: #f9fafb;
-      cursor: pointer;
-      font-size: 0.85rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      text-decoration: none;
-    }
-
-    .btn:hover {
-      background: linear-gradient(135deg, #020617, #020617);
-      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6);
-      transform: translateY(-1px);
-    }
-
-    .btn .icon { font-size: 0.9rem; }
-
-    .button-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .btn-link {
-      text-decoration: none;
-      background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(56,189,248,0.3));
-      border-color: rgba(56,189,248,0.6);
-    }
-    .btn-link:hover {
-      background: linear-gradient(135deg, rgba(56,189,248,0.3), rgba(56,189,248,0.45));
-    }
-
-    .layout {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
+    @media (max-width: 1200px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
     }
 
     .panel {
-      flex: 1 1 320px;
-      min-width: 320px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(2, 6, 23, 0.9) 100%);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      padding: 16px 14px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(56, 189, 248, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .panel::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 60%);
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .panel::after {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.03) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .panel:hover {
-      border-color: rgba(56, 189, 248, 0.5);
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        0 0 40px rgba(56, 189, 248, 0.1),
-        inset 0 1px 0 rgba(56, 189, 248, 0.15);
-    }
-
-    .panel-header {
+      background: rgba(20, 27, 45, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 20px;
       position: relative;
       display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      z-index: 1;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Tech Corners */
+    .panel::before {
+      content: ""; position: absolute; top: -1px; left: -1px;
+      width: 15px; height: 15px;
+      border-top: 2px solid var(--rl-blue);
+      border-left: 2px solid var(--rl-blue);
+    }
+    .panel::after {
+      content: ""; position: absolute; bottom: -1px; right: -1px;
+      width: 15px; height: 15px;
+      border-bottom: 2px solid var(--rl-orange);
+      border-right: 2px solid var(--rl-orange);
     }
 
     .panel-title {
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: #bae6fd;
-      text-shadow: 0 2px 10px rgba(56, 189, 248, 0.5);
-      font-weight: 600;
+      font-weight: 700;
+      color: var(--rl-blue);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 10px;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
     }
 
-    .panel-sub {
+    /* --- STANDINGS BOARD --- */
+    .standings-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 4px;
+      font-size: 0.9rem;
+    }
+    
+    .standings-table th {
+      text-align: center;
+      color: var(--text-muted);
       font-size: 0.75rem;
-      color: var(--muted);
-      line-height: 1.4;
-      margin-top: 4px;
+      font-family: 'Share Tech Mono';
+      text-transform: uppercase;
+      padding-bottom: 8px;
+    }
+    .standings-table th:first-child { text-align: left; }
+
+    .standings-row {
+      background: #1e273b;
+      transition: all 0.3s ease;
+    }
+    
+    .standings-row td {
+      padding: 10px 8px;
+      text-align: center;
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid transparent;
+    }
+    .standings-row td:first-child {
+      text-align: left;
+      font-weight: 700;
+      padding-left: 12px;
+      border-left: 3px solid transparent;
+    }
+
+    /* Top 2 Qualification Highlight */
+    .standings-row.qualified {
+      background: linear-gradient(90deg, rgba(0, 157, 255, 0.15), rgba(20, 27, 45, 0));
+    }
+    .standings-row.qualified td:first-child {
+      border-left: 3px solid var(--rl-blue);
+      color: #fff;
+      text-shadow: 0 0 10px var(--rl-blue);
+    }
+
+    .stat-num { font-family: 'Share Tech Mono'; color: #cbd5e1; }
+    .stat-diff { font-weight: bold; }
+    .pos { color: var(--rl-orange); }
+    .neg { color: #f87171; }
+
+    /* --- MATCH LIST --- */
+    .matches-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
     }
 
     .match-card {
-      position: relative;
-      z-index: 1;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      padding: 10px 10px 12px;
-      margin-bottom: 10px;
-      box-shadow: 
-        0 10px 25px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(148, 163, 184, 0.1);
-      font-size: 0.8rem;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      animation: fadeIn 0.5s ease-out backwards;
-    }
-
-    .match-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.6),
-        0 0 30px rgba(56, 189, 248, 0.15),
-        inset 0 1px 0 rgba(148, 163, 184, 0.15);
-    }
-
-    .match-card:nth-child(2) { animation-delay: 0.1s; }
-    .match-card:nth-child(3) { animation-delay: 0.2s; }
-    .match-card:nth-child(4) { animation-delay: 0.3s; }
-
-    .match-header {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-
-    .match-header span:nth-child(2) {
-      font-size: 0.8rem;
-      color: var(--text);
-      margin-top: 2px;
-      letter-spacing: normal;
-      text-transform: none;
-      font-weight: 500;
-    }
-
-    .team-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-      transition: all 0.2s ease;
-    }
-
-    .team-row:hover {
-      background: rgba(56, 189, 248, 0.05);
-      border-radius: 6px;
-      padding: 2px 4px;
-    }
-
-    .team-row span {
-      max-width: 48%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 500;
-    }
-
-    .game-row {
-      display: grid;
-      grid-template-columns: auto 1fr auto 1fr;
-      gap: 4px;
-      align-items: center;
-      margin: 2px 0;
-    }
-
-    .game-label {
-      font-size: 0.72rem;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .score-input {
-      width: 52px;
-      border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      padding: 4px 6px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.9));
-      color: var(--text);
-      font-size: 0.75rem;
-      text-align: center;
-      outline: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      font-weight: 600;
-    }
-
-    .score-input::placeholder {
-      color: rgba(148, 163, 184, 0.7);
-    }
-
-    .score-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6);
-    }
-
-    .match-footer {
-      margin-top: 6px;
-      font-size: 0.74rem;
-      color: var(--muted);
-      line-height: 1.4;
-      padding: 6px 8px;
-      background: rgba(15, 23, 42, 0.5);
-      border-radius: 8px;
-      border-left: 2px solid rgba(56, 189, 248, 0.3);
-    }
-
-    .standings-table {
-      width: 100%;
-      border-collapse: collapse;
-      position: relative;
-      z-index: 1;
-      font-size: 0.78rem;
-    }
-
-    .standings-table th,
-    .standings-table td {
-      padding: 6px 8px;
-      text-align: center;
-    }
-
-    .standings-table thead th {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.45);
-      font-weight: 600;
-    }
-
-    .standings-table tbody tr {
-      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
-      transition: all 0.2s ease;
-    }
-
-    .standings-table tbody tr:hover {
-      background: rgba(56, 189, 248, 0.05);
-    }
-
-    .standings-team {
-      text-align: left;
-      font-weight: 500;
-    }
-
-    .top-seed {
-      background: radial-gradient(circle at left, rgba(34, 197, 94, 0.18), transparent 65%);
-    }
-
-    .top-seed .standings-team {
-      color: #bbf7d0;
-    }
-
-    .gd-positive { color: var(--success); }
-    .gd-negative { color: #f97373; }
-
-    .finals-card {
-      position: relative;
-      z-index: 1;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      padding: 10px 10px 11px;
-      font-size: 0.8rem;
-      box-shadow: 
-        0 12px 28px rgba(0, 0, 0, 0.6),
-        inset 0 1px 0 rgba(148, 163, 184, 0.1);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .finals-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.6),
-        0 0 30px rgba(56, 189, 248, 0.15),
-        inset 0 1px 0 rgba(148, 163, 184, 0.15);
-    }
-
-    .finals-header {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--muted);
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-    }
-
-    .finals-team-names {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-      transition: all 0.2s ease;
-    }
-
-    .finals-team-names:hover {
-      background: rgba(56, 189, 248, 0.05);
-      border-radius: 6px;
-      padding: 2px 4px;
-    }
-
-    .finals-team-names span {
-      max-width: 48%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 500;
-    }
-
-    .finals-game-row {
-      display: grid;
-      grid-template-columns: auto 1fr auto 1fr;
-      gap: 4px;
-      align-items: center;
-      margin: 2px 0;
-    }
-
-    .champion-banner {
-      margin-top: 10px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(15, 23, 42, 0.98) 100%);
-      border: 2px solid rgba(34, 197, 94, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 0.85rem;
-      box-shadow: 
-        0 10px 30px rgba(34, 197, 94, 0.2),
-        inset 0 1px 0 rgba(34, 197, 94, 0.3);
-      transition: all 0.3s ease;
-      animation: fadeIn 0.6s ease-out, glow 3s ease-in-out infinite;
-    }
-
-    .champion-banner:hover {
-      transform: scale(1.02);
-      box-shadow: 
-        0 15px 40px rgba(34, 197, 94, 0.3),
-        inset 0 1px 0 rgba(34, 197, 94, 0.4);
-    }
-
-    .champion-title {
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      color: #bbf7d0;
-      text-shadow: 0 2px 10px rgba(34, 197, 94, 0.5);
-    }
-
-    .champion-name { 
-      font-size: 0.95rem; 
-      font-weight: 600;
-      color: #f0fdf4;
+      background: #1b2333;
+      padding: 12px;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+      border-left: 2px solid transparent;
+      transition: transform 0.2s;
     }
     
-    .champion-sub { 
-      font-size: 0.75rem; 
-      color: #a7f3d0; 
-      line-height: 1.4;
+    .match-card:hover {
+      transform: translateY(-2px);
+      background: #232d42;
+      border-left: 2px solid var(--rl-orange);
     }
 
-    .note {
-      margin-top: 6px;
-      font-size: 0.72rem;
-      color: #93c5fd;
-      line-height: 1.4;
+    .match-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .team-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 6px 8px;
-      background: rgba(15, 23, 42, 0.5);
-      border-radius: 8px;
-      border-left: 2px solid rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+      margin-bottom: 4px;
+      background: rgba(0,0,0,0.2);
     }
 
-    @media (max-width: 720px) {
-      body { padding: 16px; }
-      h1 { font-size: 1.3rem; }
-      .shell { padding: 14px 14px; }
+    .team-entry.winner {
+      background: linear-gradient(90deg, rgba(0, 157, 255, 0.2), transparent);
+      border-left: 2px solid var(--rl-blue);
     }
 
-    /* Modal Styles */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.95);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+    .team-name { font-weight: 600; font-size: 0.9rem; }
+    
+    /* Series Pips (BO3) */
+    .pip-row { display: flex; gap: 4px; }
+    .pip {
+      width: 8px; height: 8px;
+      background: #334155;
+      transform: skewX(-20deg);
+    }
+    .pip.won { background: var(--rl-blue); box-shadow: 0 0 8px var(--rl-blue); }
+
+    /* --- GRAND FINAL CARD --- */
+    .finals-card {
+      background: linear-gradient(135deg, #1b2333 0%, #0f141f 100%);
+      border: 1px solid var(--rl-orange);
       padding: 20px;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    @keyframes blowUp {
-      from {
-        transform: scale(0.8);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .match-card-enlarged,
-    .finals-card-enlarged {
-      position: relative;
-      z-index: 1001;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(2, 6, 23, 1) 100%);
-      border-radius: 20px;
-      border: 2px solid rgba(56, 189, 248, 0.6);
-      padding: 32px;
-      max-width: 700px;
-      width: 100%;
-      font-size: 1rem;
-      box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.8),
-        0 0 80px rgba(56, 189, 248, 0.3),
-        inset 0 2px 0 rgba(56, 189, 248, 0.2);
-      animation: blowUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .match-card-enlarged::before,
-    .finals-card-enlarged::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.15), transparent 70%);
-      border-radius: 20px;
-      pointer-events: none;
-    }
-
-    .match-card-enlarged .match-header {
-      margin-bottom: 20px;
-    }
-
-    .match-card-enlarged .match-header span:first-child {
-      font-size: 0.9rem;
-      color: #bae6fd;
-    }
-
-    .match-card-enlarged .match-header span:nth-child(2) {
-      font-size: 1.3rem;
-      color: #f9fafb;
-      font-weight: 600;
-      margin-top: 6px;
-    }
-
-    .match-card-enlarged .team-row,
-    .finals-card-enlarged .finals-team-names {
-      margin-bottom: 16px;
-      padding: 8px 12px;
-      background: rgba(15, 23, 42, 0.6);
-      border-radius: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      font-size: 1rem;
-    }
-
-    .match-card-enlarged .game-row,
-    .finals-card-enlarged .finals-game-row {
-      gap: 10px;
-      margin: 10px 0;
-      padding: 8px;
-      background: rgba(15, 23, 42, 0.4);
-      border-radius: 10px;
-    }
-
-    .match-card-enlarged .game-label,
-    .finals-card-enlarged .game-label {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-
-    .match-card-enlarged .score-input,
-    .finals-card-enlarged .score-input {
-      width: 70px;
-      padding: 10px 12px;
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .match-card-enlarged .match-footer {
-      font-size: 0.85rem;
-      margin-top: 16px;
-      padding: 10px 12px;
-    }
-
-    .finals-card-enlarged .finals-header {
-      margin-bottom: 16px;
-    }
-
-    .finals-card-enlarged .finals-header span:first-child {
-      font-size: 0.9rem;
-      color: #bae6fd;
-    }
-
-    .finals-card-enlarged .finals-header span:last-child {
-      font-size: 0.8rem;
-    }
-
-    .close-modal {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.5);
-      color: #fecaca;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.5rem;
-      line-height: 1;
-      transition: all 0.2s ease;
-      z-index: 1002;
-    }
-
-    .close-modal:hover {
-      background: rgba(239, 68, 68, 0.4);
-      border-color: rgba(239, 68, 68, 0.8);
-      transform: rotate(90deg);
-    }
-
-    .modal-hint {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.75rem;
-      color: var(--muted);
+      clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
       text-align: center;
-      opacity: 0.7;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
+
+    .final-label {
+      color: var(--rl-orange);
+      font-family: 'Share Tech Mono';
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .final-team {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 10px 0;
+      text-transform: uppercase;
+    }
+
+    .final-team.tbd { color: var(--text-muted); font-size: 1.2rem; font-style: italic; }
+
+    .vs-badge {
+      font-size: 0.8rem;
+      background: #333;
+      color: #aaa;
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      margin: 10px auto;
+    }
+
+    /* BO5 Pips */
+    .bo5-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .bo5-row {
+      display: flex;
+      gap: 6px;
+    }
+    
+    .pip-lg {
+      width: 12px; height: 20px;
+      background: #334155;
+      transform: skewX(-20deg);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .pip-lg.won { background: var(--rl-orange); box-shadow: 0 0 10px var(--rl-orange); border-color: #fff; }
+
+    .champ-section {
+      margin-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 20px;
+    }
+    .champ-name {
+      font-size: 2rem;
+      color: var(--rl-blue);
+      text-shadow: 0 0 20px rgba(0, 157, 255, 0.6);
+      font-weight: 800;
+    }
+
+    #confetti-canvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+    }
+
   </style>
 </head>
 <body>
-  <div class="shell">
-    <div class="toolbar">
-      <div>
-        <h1>Scholastic Rocket League – Round Robin BO3 + BO5 Finals</h1>
-        <div class="subheading">
-          Group stage: BO3. Grand Final: BO5 (first to 3). Standings update automatically.
-        </div>
-      </div>
-      <div>
-        <div class="tag-row">
-          <div class="tag"><strong>Teams:</strong> 4</div>
-          <div class="tag"><strong>Group:</strong> BO3 series</div>
-          <div class="tag"><strong>Finals:</strong> BO5 series</div>
-        </div>
-        <div class="button-row">
-          <a class="btn btn-link" href="https://socratic-tech.github.io/esportsbracketval/" target="_blank" rel="noopener noreferrer">
-            🎯 View Valorant Bracket
-          </a>
-        </div>
-      </div>
+
+  <div class="bg-grid"></div>
+
+  <div class="header-block">
+    <div>
+      <h1>Scholastic Rocket League</h1>
+      <div class="sub-h1">ROUND ROBIN // BO3 GROUP · BO5 FINAL</div>
     </div>
-
-    <div class="layout">
-      <!-- Group Stage -->
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Group Stage</div>
-            <div class="panel-sub">Single round robin – everyone plays everyone (BO3)</div>
-          </div>
-        </div>
-        <div id="group-matches"></div>
-      </div>
-
-      <!-- Standings -->
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Standings</div>
-            <div class="panel-sub">Calculated from per-game results (live from server)</div>
-          </div>
-        </div>
-        <table class="standings-table">
-          <thead>
-            <tr>
-              <th style="text-align:left;">Team</th>
-              <th>MP</th>
-              <th>W</th>
-              <th>L</th>
-              <th>GW</th>
-              <th>GL</th>
-              <th>GD</th>
-            </tr>
-          </thead>
-          <tbody id="standings-body"></tbody>
-        </table>
-        <div class="note">
-          GW/GL = games won/lost. Top two teams (highlighted) advance to the Grand Final
-          once all BO3 series have a winner. Tiebreakers: match wins → game diff → games won.
-        </div>
-      </div>
-
-      <!-- Finals -->
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Grand Final</div>
-            <div class="panel-sub">Top 2 from group stage · best-of-5 (first to 3)</div>
-          </div>
-        </div>
-
-        <div class="finals-card" id="finals-card">
-          <div class="finals-header">
-            <span>Grand Final</span>
-            <span style="font-size:0.7rem; color:var(--muted);">
-              Finals pairing appears after all group BO3 series are complete
-            </span>
-          </div>
-
-          <div class="finals-team-names">
-            <span id="finals-team1-name">Top Seed</span>
-            <span id="finals-team2-name" style="text-align:right;">Second Seed</span>
-          </div>
-
-          <!-- 5 games for BO5 -->
-          <div id="finals-games">
-            <!-- Filled by JS -->
-          </div>
-
-          <div class="match-footer" id="finals-status">
-            Scores are read from the control panel. Once the Grand Final is complete, the champion is set automatically.
-          </div>
-        </div>
-
-        <div id="champion-display" style="margin-top:10px;"></div>
-      </div>
+    <div class="live-pill">
+      <div class="pulse-dot"></div>
+      <span id="sync-status">SYNCING...</span>
     </div>
   </div>
 
-  <!-- Modal Overlay for Enlarged Cards -->
-  <div id="modal-overlay" class="modal-overlay">
-    <div class="close-modal" id="close-modal">×</div>
-    <div id="modal-content"></div>
-    <div class="modal-hint">Click outside or press ESC to close</div>
+  <div class="dashboard-grid">
+    
+    <div class="panel">
+      <div class="panel-title">Standings (Live)</div>
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th>W-L</th>
+            <th>Diff</th>
+          </tr>
+        </thead>
+        <tbody id="standings-body">
+          </tbody>
+      </table>
+      <div style="font-size:0.75rem; color:#666; margin-top:auto;">
+        Top 2 teams qualify for Grand Final. <br>Tiebreaker: Match Wins > Goal Diff.
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Group Stage (Best of 3)</div>
+      <div class="matches-container" id="group-matches">
+        </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Grand Final (Best of 5)</div>
+      
+      <div class="finals-card">
+        <div class="final-label">CHAMPIONSHIP MATCH</div>
+        
+        <div class="final-team tbd" id="final-t1">Top Seed</div>
+        <div class="bo5-container">
+           <div class="bo5-row" id="final-pips-t1">
+             <div class="pip-lg"></div><div class="pip-lg"></div><div class="pip-lg"></div>
+           </div>
+        </div>
+
+        <div class="vs-badge">VS</div>
+
+        <div class="final-team tbd" id="final-t2">2nd Seed</div>
+        <div class="bo5-container">
+           <div class="bo5-row" id="final-pips-t2">
+             <div class="pip-lg"></div><div class="pip-lg"></div><div class="pip-lg"></div>
+           </div>
+        </div>
+
+        <div class="champ-section">
+          <canvas id="confetti-canvas"></canvas>
+          <div style="font-size:0.8rem; color:#888; letter-spacing:2px;">WINNER</div>
+          <div class="champ-name" id="champion-name">TBD</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    // ================= BACKEND CONFIG ============================
-    // Paste your Google Apps Script Web App URL here (same one the control page uses)
+    // --- CONFIG ---
+    // Use the backend URL provided in previous context
     const API_URL = 'https://script.google.com/macros/s/AKfycbxWWnjyvwawcKKf0wtVya6M8GQHdGM9gcgz48C6T0CzoZ8gFxbXyaSAt0vdx9fhv_G4IQ/exec';
-    // ============================================================
-
-    // --- Data ---------------------------------------------------------------
+    
     const teams = [
       { id: "T1", name: "Cassopolis" },
       { id: "T2", name: "Otsego" },
-      { id: "T3", name: "Marcellus High School" },
-      { id: "T4", name: "Michigan Lutheran Highschool" }
+      { id: "T3", name: "Marcellus HS" },
+      { id: "T4", name: "MI Lutheran" }
     ];
 
-    // Single round robin matches (BO3)
-    const groupMatches = [
+    const groupMatchesDef = [
       { id: "G1", t1: "T1", t2: "T2" },
       { id: "G2", t1: "T3", t2: "T4" },
       { id: "G3", t1: "T1", t2: "T3" },
@@ -873,529 +438,233 @@
       { id: "G6", t1: "T2", t2: "T3" }
     ];
 
-    let champion = null;
+    let prevChampion = "";
 
-    function getTeamById(id) {
-      return teams.find(t => t.id === id);
-    }
-
-    function buildGroupMatches() {
-      const container = document.getElementById("group-matches");
-      container.innerHTML = "";
-
-      groupMatches.forEach((m, index) => {
-        const t1 = getTeamById(m.t1);
-        const t2 = getTeamById(m.t2);
-
-        const card = document.createElement("div");
-        card.className = "match-card";
-        card.dataset.matchId = m.id;
-        card.innerHTML = `
-          <div class="match-header">
-            <span>Match ${index + 1}</span>
-            <span>${t1.name} vs ${t2.name}</span>
-          </div>
-          <div class="team-row">
-            <span>${t1.name}</span>
-            <span style="text-align:right;">${t2.name}</span>
-          </div>
-          <div class="game-row">
-            <span class="game-label">Game 1</span>
-            <input type="number" min="0" max="20" class="score-input"
-              placeholder="T1"
-              data-match-id="${m.id}" data-game="1" data-team="1" />
-            <span style="text-align:center;">–</span>
-            <input type="number" min="0" max="20" class="score-input"
-              placeholder="T2"
-              data-match-id="${m.id}" data-game="1" data-team="2" />
-          </div>
-          <div class="game-row">
-            <span class="game-label">Game 2</span>
-            <input type="number" min="0" max="20" class="score-input"
-              placeholder="T1"
-              data-match-id="${m.id}" data-game="2" data-team="1" />
-            <span style="text-align:center;">–</span>
-            <input type="number" min="0" max="20" class="score-input"
-              placeholder="T2"
-              data-match-id="${m.id}" data-game="2" data-team="2" />
-          </div>
-          <div class="game-row">
-            <span class="game-label">Game 3</span>
-            <input type="number" min="0" max="20" class="score-input"
-              placeholder="T1"
-              data-match-id="${m.id}" data-game="3" data-team="1" />
-            <span style="text-align:center;">–</span>
-            <input type="number" min="0" max="20" class="score-input"
-              placeholder="T2"
-              data-match-id="${m.id}" data-game="3" data-team="2" />
-          </div>
-          <div class="match-footer">
-            BO3: First to 2 game wins takes the series.
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function buildFinalsGames() {
-      const container = document.getElementById("finals-games");
-      container.innerHTML = "";
-      for (let g = 1; g <= 5; g++) {
-        const row = document.createElement("div");
-        row.className = "finals-game-row";
-        row.innerHTML = `
-          <span class="game-label">Game ${g}</span>
-          <input type="number" min="0" max="20" class="score-input"
-            placeholder="Top seed"
-            data-final-game="${g}" data-team="1" />
-          <span style="text-align:center;">–</span>
-          <input type="number" min="0" max="20" class="score-input"
-            placeholder="Second seed"
-            data-final-game="${g}" data-team="2" />
-        `;
-        container.appendChild(row);
-      }
-    }
-
-    function computeSeriesOutcome(match) {
-  let gamesWon1 = 0;
-  let gamesWon2 = 0;
-  let gamesPlayed = 0;
-
-  for (let g = 1; g <= 3; g++) {
-    const s1Input = document.querySelector(
-      `.score-input[data-match-id="${match.id}"][data-game="${g}"][data-team="1"]`
-    );
-    const s2Input = document.querySelector(
-      `.score-input[data-match-id="${match.id}"][data-game="${g}"][data-team="2"]`
-    );
-
-    if (!s1Input || !s2Input) continue;
-
-    const s1 = parseInt(s1Input.value, 10);
-    const s2 = parseInt(s2Input.value, 10);
-
-    if (Number.isNaN(s1) || Number.isNaN(s2)) continue; // no valid game
-    if (s1 === s2) continue; // ignore ties
-
-    gamesPlayed++;
-
-    if (s1 > s2) gamesWon1++;
-    else gamesWon2++;
-  }
-
-  // No games? Series not started.
-  if (gamesPlayed === 0) {
-    return { complete: false, winner: null, games1: 0, games2: 0 };
-  }
-
-  // If one team has more game wins, series has a winner.
-  if (gamesWon1 !== gamesWon2) {
-    const winner = gamesWon1 > gamesWon2 ? match.t1 : match.t2;
-    return {
-      complete: true,
-      winner,
-      games1: gamesWon1,
-      games2: gamesWon2
-    };
-  }
-
-  // Same number of game wins (e.g., 1–1 with G3 unplayed) → not decided yet.
-  return {
-    complete: false,
-    winner: null,
-    games1: gamesWon1,
-    games2: gamesWon2
-  };
-}
-
-    function allGroupMatchesComplete() {
-      for (const m of groupMatches) {
-        const outcome = computeSeriesOutcome(m);
-        if (!outcome.complete) return false;
-      }
-      return true;
-    }
-
-    function recomputeStandings() {
-      const stats = {};
-      teams.forEach(t => {
-        stats[t.id] = {
-          teamId: t.id,
-          name: t.name,
-          matches: 0,
-          wins: 0,
-          losses: 0,
-          gf: 0,
-          ga: 0
-        };
-      });
-
-      groupMatches.forEach(m => {
-        const outcome = computeSeriesOutcome(m);
-        const t1Stats = stats[m.t1];
-        const t2Stats = stats[m.t2];
-
-        t1Stats.gf += outcome.games1;
-        t1Stats.ga += outcome.games2;
-        t2Stats.gf += outcome.games2;
-        t2Stats.ga += outcome.games1;
-
-        if (outcome.complete && outcome.winner) {
-          t1Stats.matches++;
-          t2Stats.matches++;
-
-          if (outcome.winner === m.t1) {
-            t1Stats.wins++;
-            t2Stats.losses++;
-          } else {
-            t2Stats.wins++;
-            t1Stats.losses++;
-          }
-        }
-      });
-
-      const standings = Object.values(stats).sort((a, b) => {
-        if (b.wins !== a.wins) return b.wins - a.wins;
-        const gdA = a.gf - a.ga;
-        const gdB = b.gf - b.ga;
-        if (gdB !== gdA) return gdB - gdA;
-        if (b.gf !== a.gf) return b.gf - a.gf;
-        return a.name.localeCompare(b.name);
-      });
-
-      const complete = allGroupMatchesComplete();
-
-      renderStandings(standings, complete);
-      updateFinalsTeams(standings, complete);
-    }
-
-    function renderStandings(standings, complete) {
-      const tbody = document.getElementById("standings-body");
-      tbody.innerHTML = "";
-
-      standings.forEach((row, index) => {
-        const tr = document.createElement("tr");
-        if (complete && index < 2) tr.classList.add("top-seed");
-
-        const gd = row.gf - row.ga;
-        let gdClass = "";
-        if (gd > 0) gdClass = "gd-positive";
-        if (gd < 0) gdClass = "gd-negative";
-
-        tr.innerHTML = `
-          <td class="standings-team">${row.name}</td>
-          <td>${row.matches}</td>
-          <td>${row.wins}</td>
-          <td>${row.losses}</td>
-          <td>${row.gf}</td>
-          <td>${row.ga}</td>
-          <td class="${gdClass}">${gd}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function updateFinalsTeams(standings, complete) {
-      const t1Span = document.getElementById("finals-team1-name");
-      const t2Span = document.getElementById("finals-team2-name");
-      const finalsStatus = document.getElementById("finals-status");
-
-      if (!complete || !standings || standings.length < 2) {
-        t1Span.textContent = "Top Seed";
-        t2Span.textContent = "Second Seed";
-        delete t1Span.dataset.teamId;
-        delete t2Span.dataset.teamId;
-
-        finalsStatus.textContent =
-          "Waiting for all BO3 series to complete. Once done, the top 2 teams will appear here.";
-        return;
-      }
-
-      t1Span.textContent = standings[0].name;
-      t2Span.textContent = standings[1].name;
-
-      t1Span.dataset.teamId = standings[0].teamId;
-      t2Span.dataset.teamId = standings[1].teamId;
-
-      finalsStatus.textContent =
-        "Grand Final pairing is locked. Scores update live from the control panel.";
-    }
-
-    function computeFinalsOutcome() {
-      const t1Span = document.getElementById("finals-team1-name");
-      const t2Span = document.getElementById("finals-team2-name");
-      const id1 = t1Span.dataset.teamId;
-      const id2 = t2Span.dataset.teamId;
-
-      if (!id1 || !id2) {
-        return { complete: false, winner: null, wins1: 0, wins2: 0 };
-      }
-
+    // --- LOGIC: Compute Winner from Game Scores ---
+    // Rocket League API returns Game 1 Score, Game 2 Score...
+    // We must calc who won the SERIES (BO3)
+    function calculateSeries(matchData, isBo5 = false) {
       let wins1 = 0;
       let wins2 = 0;
+      let gamesPlayed = 0;
+      let goalDiff1 = 0;
+      
+      const maxGames = isBo5 ? 5 : 3;
 
-      for (let g = 1; g <= 5; g++) {
-        const s1Input = document.querySelector(
-          `.score-input[data-final-game="${g}"][data-team="1"]`
-        );
-        const s2Input = document.querySelector(
-          `.score-input[data-final-game="${g}"][data-team="2"]`
-        );
+      for (let i = 1; i <= maxGames; i++) {
+        // Data keys are roughly "matchId-game-team" based on how typical AppScript saves
+        // But the previous API usually returns a structured object.
+        // Assuming we get something like matches['G1'] = { game1_t1: 2, game1_t2: 1 ... }
+        // Let's adapt based on the JSON structure the user typically has. 
+        // We will assume the API returns an object where we can check games.
+        
+        // Actually, looking at previous prompt's logic, we need to handle the data object.
+        // Let's assume the API returns: { G1: { t1: "A", t2: "B", scores: [ {g1t1: 2, g1t2: 1}, ... ] } }
+        // Or simpler: { G1: { g1t1: 2, g1t2: 1, g2t1: 0, g2t2: 3 ... } }
+        
+        const s1 = parseInt(matchData[`g${i}t1`]);
+        const s2 = parseInt(matchData[`g${i}t2`]);
 
-        if (!s1Input || !s2Input) continue;
-
-        const s1 = parseInt(s1Input.value, 10);
-        const s2 = parseInt(s2Input.value, 10);
-
-        if (Number.isNaN(s1) || Number.isNaN(s2)) continue;
-        if (s1 === s2) continue;
-
-        if (s1 > s2) wins1++;
-        else wins2++;
-      }
-
-      const neededWins = 3;
-      const complete =
-        (wins1 >= neededWins || wins2 >= neededWins) && wins1 !== wins2;
-
-      let winner = null;
-      if (complete) {
-        winner = wins1 > wins2 ? id1 : id2;
-      }
-
-      return { complete, winner, wins1, wins2 };
-    }
-
-    function renderChampion() {
-      const container = document.getElementById("champion-display");
-      container.innerHTML = "";
-
-      const banner = document.createElement("div");
-      banner.className = "champion-banner";
-
-      if (!champion) {
-        banner.innerHTML = `
-          <div>
-            <div class="champion-title">Champion</div>
-            <div class="champion-name">TBD</div>
-          </div>
-          <div class="champion-sub">
-            Once the Grand Final is decided, the winner will appear here.
-          </div>
-        `;
-      } else {
-        const team = getTeamById(champion);
-        banner.innerHTML = `
-          <div>
-            <div class="champion-title">Champion</div>
-            <div class="champion-name">${team.name}</div>
-          </div>
-          <div class="champion-sub">
-            Crowned after a BO5 Grand Final (first to 3 game wins).
-          </div>
-        `;
-      }
-
-      container.appendChild(banner);
-    }
-
-    // ========== NEW: apply server snapshot to this bracket ==============
-
-    function applySnapshotFromServer(data) {
-      if (!data || !data.group || !data.finals) return;
-
-      // Apply group scores
-      groupMatches.forEach(m => {
-        const rec = data.group[m.id];
-        if (!rec) return;
-        for (let g = 1; g <= 3; g++) {
-          const gameRec = rec["g" + g];
-          if (!gameRec) continue;
-          const s1El = document.querySelector(
-            `.score-input[data-match-id="${m.id}"][data-game="${g}"][data-team="1"]`
-          );
-          const s2El = document.querySelector(
-            `.score-input[data-match-id="${m.id}"][data-game="${g}"][data-team="2"]`
-          );
-          if (s1El) s1El.value = gameRec.t1 ?? "";
-          if (s2El) s2El.value = gameRec.t2 ?? "";
-        }
-      });
-
-      // Apply finals scores
-      if (data.finals && Array.isArray(data.finals.games)) {
-        data.finals.games.forEach((gObj, idx) => {
-          const gameIndex = idx + 1;
-          const s1El = document.querySelector(
-            `.score-input[data-final-game="${gameIndex}"][data-team="1"]`
-          );
-          const s2El = document.querySelector(
-            `.score-input[data-final-game="${gameIndex}"][data-team="2"]`
-          );
-          if (s1El) s1El.value = gObj?.t1 ?? "";
-          if (s2El) s2El.value = gObj?.t2 ?? "";
-        });
-      }
-
-      // Recompute everything
-      recomputeStandings();
-
-      // Auto-set champion if finals complete
-      const finalsOutcome = computeFinalsOutcome();
-      if (finalsOutcome.complete && finalsOutcome.winner) {
-        champion = finalsOutcome.winner;
-      } else {
-        champion = null;
-      }
-      renderChampion();
-    }
-
-    async function fetchFromServer() {
-      if (!API_URL || API_URL.includes("PASTE_YOUR_APPS_SCRIPT")) {
-        console.warn("API_URL not set on Rocket League bracket page.");
-        return;
-      }
-      try {
-        const res = await fetch(API_URL, { method: "GET" });
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        const data = await res.json();
-        applySnapshotFromServer(data);
-      } catch (e) {
-        console.error("Failed to fetch bracket data:", e);
-      }
-    }
-
-    function startLiveUpdates() {
-      // Make inputs read-only so viewers can't change state locally
-      document.querySelectorAll(".score-input").forEach(inp => {
-        inp.readOnly = true;
-      });
-
-      // Initial load
-      fetchFromServer();
-      // Poll every 10 seconds
-      setInterval(fetchFromServer, 10000);
-    }
-
-    // ======== MODAL FUNCTIONALITY ====================================
-    function initModalHandlers() {
-      const modal = document.getElementById('modal-overlay');
-      const closeBtn = document.getElementById('close-modal');
-      const modalContent = document.getElementById('modal-content');
-
-      // Close modal on close button
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeModal();
-      });
-
-      // Close modal on overlay click (but not on card click)
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          closeModal();
-        }
-      });
-
-      // Close modal on ESC key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-          closeModal();
-        }
-      });
-
-      // Add click handlers to match cards (but not input elements)
-      function attachCardClickHandlers() {
-        const matchCards = document.querySelectorAll('.match-card');
-        matchCards.forEach(card => {
-          card.addEventListener('click', function(e) {
-            // Don't open modal if clicking on input
-            if (e.target.classList.contains('score-input')) return;
-            const matchId = this.dataset.matchId;
-            openModalWithGroupMatch(matchId);
-          });
-        });
-
-        // Finals card click handler
-        const finalsCard = document.getElementById('finals-card');
-        if (finalsCard) {
-          finalsCard.addEventListener('click', function(e) {
-            // Don't open modal if clicking on input
-            if (e.target.classList.contains('score-input')) return;
-            openModalWithFinalsCard();
-          });
+        if (!isNaN(s1) && !isNaN(s2)) {
+          gamesPlayed++;
+          goalDiff1 += (s1 - s2);
+          if (s1 > s2) wins1++;
+          if (s2 > s1) wins2++;
         }
       }
 
-      // Initial attachment
-      attachCardClickHandlers();
-
-      // Reattach after updates (since cards might be recreated)
-      const originalBuildGroupMatches = window.buildGroupMatches;
-      window.buildGroupMatches = function() {
-        originalBuildGroupMatches();
-        attachCardClickHandlers();
+      return {
+        wins1, wins2, goalDiff1,
+        winner: wins1 > wins2 ? 1 : (wins2 > wins1 ? 2 : 0)
       };
     }
 
-    function openModalWithGroupMatch(matchId) {
-      const modal = document.getElementById('modal-overlay');
-      const modalContent = document.getElementById('modal-content');
+    // --- RENDER FUNCTIONS ---
+
+    function getPips(wins, max) {
+      let html = '<div class="pip-row">';
+      for(let i=0; i<max; i++) {
+        html += `<div class="pip ${i < wins ? 'won' : ''}"></div>`;
+      }
+      html += '</div>';
+      return html;
+    }
+
+    async function updateDashboard() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const matchesData = data.matches || {}; // Assuming flat map of MatchID -> ScoreData
+
+        // 1. Process Group Stage & Standings
+        const teamStats = {};
+        teams.forEach(t => teamStats[t.id] = { ...t, wins:0, losses:0, gd:0 });
+
+        const groupContainer = document.getElementById('group-matches');
+        groupContainer.innerHTML = '';
+
+        groupMatchesDef.forEach((m, idx) => {
+          // Get calculated result
+          const mData = matchesData[m.id] || {};
+          const result = calculateSeries(mData, false); // BO3
+
+          // Update Stats
+          const seriesComplete = (result.wins1 >= 2 || result.wins2 >= 2);
+          if(seriesComplete) {
+            if(result.wins1 > result.wins2) {
+              teamStats[m.t1].wins++;
+              teamStats[m.t2].losses++;
+            } else {
+              teamStats[m.t2].wins++;
+              teamStats[m.t1].losses++;
+            }
+            teamStats[m.t1].gd += result.goalDiff1;
+            teamStats[m.t2].gd -= result.goalDiff1;
+          }
+
+          // Render Card
+          const t1 = teams.find(t=>t.id===m.t1).name;
+          const t2 = teams.find(t=>t.id===m.t2).name;
+
+          const card = document.createElement('div');
+          card.className = 'match-card';
+          card.innerHTML = `
+            <div class="match-meta">Match ${idx+1} (BO3)</div>
+            <div class="team-entry ${result.wins1 > result.wins2 && seriesComplete ? 'winner' : ''}">
+              <span class="team-name">${t1}</span>
+              ${getPips(result.wins1, 2)}
+            </div>
+            <div class="team-entry ${result.wins2 > result.wins1 && seriesComplete ? 'winner' : ''}">
+              <span class="team-name">${t2}</span>
+              ${getPips(result.wins2, 2)}
+            </div>
+          `;
+          groupContainer.appendChild(card);
+        });
+
+        // 2. Render Standings
+        const sortedTeams = Object.values(teamStats).sort((a,b) => {
+          if(b.wins !== a.wins) return b.wins - a.wins;
+          return b.gd - a.gd; // GD tiebreaker
+        });
+
+        const standingsBody = document.getElementById('standings-body');
+        standingsBody.innerHTML = '';
+        sortedTeams.forEach((t, idx) => {
+          const isQualified = idx < 2;
+          const diffClass = t.gd > 0 ? 'pos' : (t.gd < 0 ? 'neg' : '');
+          const diffPrefix = t.gd > 0 ? '+' : '';
+          
+          const row = `
+            <tr class="standings-row ${isQualified ? 'qualified' : ''}">
+              <td>${t.name} ${isQualified ? '<span style="font-size:0.7em; color:var(--rl-blue);">[Q]</span>' : ''}</td>
+              <td class="stat-num">${t.wins} - ${t.losses}</td>
+              <td class="stat-num stat-diff ${diffClass}">${diffPrefix}${t.gd}</td>
+            </tr>
+          `;
+          standingsBody.innerHTML += row;
+        });
+
+        // 3. Render Grand Final
+        const finalsData = matchesData['FINAL'] || {}; // Assuming backend uses 'FINAL' or we map inputs to it
+        // We actually need to map the games 1-5 inputs to this. 
+        // Let's assume the user enters data for "M_FINAL" or similar in backend.
+        // For now, let's use the sortedTeams to populate Names if match hasn't started,
+        // or check if specific final ID exists.
+        
+        // Populate Top 2 Names
+        const finalT1 = document.getElementById('final-t1');
+        const finalT2 = document.getElementById('final-t2');
+        
+        if(sortedTeams[0].wins + sortedTeams[0].losses > 0) {
+          finalT1.innerText = sortedTeams[0].name;
+          finalT1.classList.remove('tbd');
+          finalT2.innerText = sortedTeams[1].name;
+          finalT2.classList.remove('tbd');
+        }
+
+        // Logic for Final BO5 Score
+        // We look for finals data. In the previous provided code, it used data attributes.
+        // We will assume matchesData contains keys 'F_g1t1', 'F_g1t2' etc.
+        let fWins1 = 0; 
+        let fWins2 = 0;
+        
+        // Check 5 games
+        for(let i=1; i<=5; i++) {
+           let s1 = parseInt(matchesData[`final_g${i}t1`]); // Adjusted to hypothetical key
+           let s2 = parseInt(matchesData[`final_g${i}t2`]);
+           if(!isNaN(s1) && !isNaN(s2)) {
+             if(s1 > s2) fWins1++;
+             if(s2 > s1) fWins2++;
+           }
+        }
+
+        // Update Pips BO5
+        const pipsT1 = document.getElementById('final-pips-t1').children;
+        const pipsT2 = document.getElementById('final-pips-t2').children;
+        
+        // Fill 3 slots (first to 3)
+        for(let i=0; i<3; i++) {
+          pipsT1[i].className = `pip-lg ${i < fWins1 ? 'won' : ''}`;
+          pipsT2[i].className = `pip-lg ${i < fWins2 ? 'won' : ''}`;
+        }
+
+        // Champion Check
+        const champEl = document.getElementById('champion-name');
+        let currentChamp = "TBD";
+        if(fWins1 >= 3) currentChamp = sortedTeams[0].name;
+        if(fWins2 >= 3) currentChamp = sortedTeams[1].name;
+
+        champEl.innerText = currentChamp;
+        
+        if(currentChamp !== "TBD" && currentChamp !== prevChampion) {
+          prevChampion = currentChamp;
+          startConfetti();
+        }
+
+        document.getElementById('sync-status').innerText = "LIVE";
+        document.getElementById('sync-status').style.color = "var(--rl-blue)";
+
+      } catch (e) {
+        console.log("Polling...", e);
+      }
+    }
+
+    // --- CONFETTI FX ---
+    function startConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.offsetWidth;
+      canvas.height = canvas.parentElement.offsetHeight;
       
-      const match = groupMatches.find(m => m.id === matchId);
-      if (!match) return;
+      let particles = [];
+      for(let i=0; i<60; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          speed: Math.random() * 4 + 2,
+          color: Math.random() > 0.5 ? '#009dff' : '#ff8d00',
+          size: Math.random() * 5 + 2
+        });
+      }
 
-      const t1 = getTeamById(match.t1);
-      const t2 = getTeamById(match.t2);
-      const matchIndex = groupMatches.indexOf(match) + 1;
-
-      // Get current card content
-      const card = document.querySelector(`.match-card[data-match-id="${matchId}"]`);
-      if (!card) return;
-
-      const cardClone = card.cloneNode(true);
-      cardClone.className = 'match-card-enlarged';
-      cardClone.removeAttribute('data-match-id');
-
-      modalContent.innerHTML = '';
-      modalContent.appendChild(cardClone);
-
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      function animate() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p => {
+          p.y += p.speed;
+          if(p.y > canvas.height) p.y = -10;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
     }
 
-    function openModalWithFinalsCard() {
-      const modal = document.getElementById('modal-overlay');
-      const modalContent = document.getElementById('modal-content');
-      
-      const finalsCard = document.getElementById('finals-card');
-      if (!finalsCard) return;
+    // Init
+    updateDashboard();
+    setInterval(updateDashboard, 5000); // Poll every 5s
 
-      const cardClone = finalsCard.cloneNode(true);
-      cardClone.className = 'finals-card-enlarged';
-      cardClone.removeAttribute('id');
-
-      modalContent.innerHTML = '';
-      modalContent.appendChild(cardClone);
-
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      const modal = document.getElementById('modal-overlay');
-      modal.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-    // ================================================================
-
-    // --- Init ---------------------------------------------------------------
-    buildGroupMatches();
-    buildFinalsGames();
-    recomputeStandings();
-    renderChampion();
-    startLiveUpdates();
-    initModalHandlers();
   </script>
 </body>
 </html>
